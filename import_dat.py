@@ -16,7 +16,7 @@ cols=["event-id","visible","timestamp","location-long","location-lat","sensor-ty
 print(df)
 df.columns=cols
 #dd
-for i in range(89871):
+for i in range(89869):
     #print(df.loc[i])
     doc_ref = db.collection(coll).document(str(df.loc[i]['event-id']))
     doc_ref.set({"time":df.loc[i]['timestamp'],"location-long":df.loc[i]['location-long'],
