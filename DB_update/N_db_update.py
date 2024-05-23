@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from Utils_plot import save_plot
 
-exfile = './DB_update/ex.json'
+exfile = './DB_update/json/ex.json'
 
 with open(exfile, 'r') as file:
     data = json.load(file)
