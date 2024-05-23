@@ -1,3 +1,5 @@
 flask
 pandas
 google-cloud-firestore
+numpy
+matplotlib
