@@ -29,15 +29,17 @@ gps.rename(columns={
     "timestamp": "times"
 }, inplace=True)
 
-# Opzione 1: Visualizzare i gruppi
 print("Visualizzazione dei gruppi:")
-for name, group in gps.groupby(["id", "name"]):
-    print(f"Group name: {name}")
-    group['coordinates'] = group.apply(lambda row: f"{row['long']}, {row['lat']}", axis=1)
-    # print(group.to_json(orient ='records'))
-    traj = CreateJSONfromCSV(group)
-    JSONtoFile(traj, 'prova')
 
-    # print(json.dumps(traj, indent=4))
-    break
+# traj è una lista che conterrà tutti i json delle singole traiettorie
+traj = []
+for name, group in gps.groupby(["id", "name"]):
+    group['coordinates'] = group.apply(lambda row: [row['long'], row['lat']], axis=1)
+    # per aggiungere i json è sufficiente andarli ad aggiungere alla lista
+    traj.append(CreateJSONfromCSV(group))
+
+# json goes to the file
+with open("DB_update/json/trajectories.json", "w") as file:
+    json.dump(traj, file, indent=4)
+
     

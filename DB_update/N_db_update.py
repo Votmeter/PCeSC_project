@@ -1,30 +1,40 @@
 import json
-import numpy as np
 import matplotlib.pyplot as plt
 from Utils_plot import save_plot
 
-exfile = './DB_update/json/ex.json'
+exfile = './DB_update/json/trajectories.json'
+
+# input
+idtraj = "91930A"
+points = [2, 5 , 9]
+u_coords= [[
+                0,
+                0
+            ],
+            [
+                2,
+                2
+            ],
+            [
+                3,
+                3
+            ]]
+
 
 with open(exfile, 'r') as file:
     data = json.load(file)
-    # formatted_data = json.dumps(data, indent=4, ensure_ascii=False)
 
-    coordinates= data.get("features")[0].get("geometry").get("coordinates")
+    for t in range(len(data)):
+        if data[t].get("id") == idtraj:
+            iter = 0
+            for h in points:
+                data[t].get("coordinates")[h] = u_coords[iter]
+                iter+= 1
 
-    # Separa le coordinate in due array
-    latitudes = [coord[1] for coord in coordinates]
-    longitudes = [coord[0] for coord in coordinates]
+    print(json.dumps(data[-1], indent=4))
 
-    # Crea gli array NumPy
-    latitudes_array = np.array(latitudes)
-    longitudes_array = np.array(longitudes)
-
-    # # Stampa gli array per verifica
-    # print("Array di latitudini:", latitudes_array)
-    # print("Array di longitudini:", longitudes_array)
-
-
-save_plot( longitudes_array, latitudes_array, "test1")
+ 
+# save_plot( longitudes_array, latitudes_array, "test1")
 
 
 
