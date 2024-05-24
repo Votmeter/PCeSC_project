@@ -13,3 +13,14 @@ def CreateJSONfromCSV(group):
 def JSONtoFile(traj, filename):
     with open(f"DB_update/json/{filename}.json", 'w') as file:
         json.dump(traj, file, indent=4)
+
+def CreateJSONfromGeoJSON(id, name, technology, coords, times):
+    traj = {
+        "id": id,
+        "specie": name,
+        "technology": technology,
+
+        "coordinates": coords,
+        "times": times,
+    }
+    return traj

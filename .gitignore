@@ -161,3 +161,4 @@ cython_debug/
 DB_update/JSON_trajectories.md
 DB_update/json/format.json
 DB_update/json/prova.json
+DB_update/json/trajectories copy.json
