@@ -1,0 +1,14 @@
+{
+    "id": "idtest",
+    "specie": "nametest",
+    "technology": "technologytest",
+
+    "coordinates": [
+            [],
+            []
+        ],
+        "times": [
+            "",
+            ""
+        ]
+}
