@@ -1,3 +1,4 @@
 flask
+flask_login
 pandas
 google-cloud-firestore
