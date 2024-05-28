@@ -159,6 +159,11 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 DB_update/JSON_trajectories.md
+DB_update/N_MapVisualization.ipynb
 DB_update/json/format.json
 DB_update/json/prova.json
 DB_update/json/trajectories copy.json
+
+N_flask.py
+templates
+DB_update/map.py
