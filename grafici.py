@@ -16,9 +16,9 @@ def create_plot2():
 	# db = firestore.Client.from_service_account_json('credentials.json', database=db)
 	df = pd.read_csv("document/gps.csv", header=0)
 
-	df = df.rename(columns={'individual-taxon-canonical-name': "Bird's Type", "location-long": "longitudine"})
+	df = df.rename(columns={'individual-taxon-canonical-name': "Tipologia di uccello", "location-long": "Longitudine", "location-lat": "Latitudine})
 
-	fig = px.scatter_mapbox(df, lat="location-lat", lon="longitudine", color="individual-local-identifier",
+	fig = px.scatter_mapbox(df, lat="Latitudine", lon="Longitudine", color="individual-local-identifier",
 							# size="car_hours",
 							color_continuous_scale=px.colors.cyclical.IceFire, size_max=15,  # zoom=10,
 							mapbox_style="carto-positron")
@@ -34,9 +34,9 @@ def create_plot():
 	#db = firestore.Client.from_service_account_json('credentials.json', database=db)
 	df=pd.read_csv("document/gps.csv", header=0)
 
-	df = df.rename(columns = {'individual-taxon-canonical-name': "Bird's Type", "location-long": "longitudine"})
+	df = df.rename(columns={'individual-taxon-canonical-name': "Tipologia di uccello", "location-long": "Longitudine", "location-lat": "Latitudine})
 
-	fig = px.scatter_mapbox(df, lat="location-lat", lon="longitudine", color="Bird's Type", #size="car_hours",
+	fig = px.scatter_mapbox(df, lat="Latitudine", lon="Longitudine", color="Bird's Type", #size="car_hours",
 	                  color_continuous_scale=px.colors.cyclical.IceFire, size_max=15, #zoom=10,
 	                  mapbox_style="carto-positron")
 
