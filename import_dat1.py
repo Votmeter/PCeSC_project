@@ -18,10 +18,8 @@ df.columns=cols
 
 for i in range(89869):
     #print(df.loc[i])
-    doc_ref = db.collection(coll).document(str(df.loc[i]['event-id']))
-    doc_ref.set({"time":df.loc[i]['timestamp'],"location-long":df.loc[i]['location-long'],
-                 "location-lat":df.loc[i]['location-lat'],"bird":df.loc[i]['individual-taxon-canonical-name'],
-                 "bird-id":df.loc[i]['individual-local-identifier']})
+    doc_ref = db.collection(df.loc[i]['individual-local-identifier']).document(str(df.loc[i]['event-id']))
+    doc_ref.set({"long":df.loc[i]['location-long'], "lat":df.loc[i]['location-lat']})
 
 
 
