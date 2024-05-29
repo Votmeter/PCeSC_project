@@ -93,5 +93,13 @@ def get_data(s):
     else:
         return 'trajectory not found',404
 
+@app.route('/selgraph',methods=['GET'])
+def getlist():
+    l=[]
+    for doc in db.collections():
+        l.append(doc.id)
+    l=json.dumps(l)
+    return render_template('selgraph.html', l=l)
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)

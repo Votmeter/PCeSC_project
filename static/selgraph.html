@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista Checkbox</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .checkbox-container {
+            margin: 20px;
+        }
+        .checkbox-item {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Lista traiettorie</h1>
+
+    <div class="checkbox-container">
+        <script>
+            // Definizione della lista
+            const itemList2 = {{l | tojson }};
+            const itemList = itemList2.replace("[","").replace("]","").replace(/['"]+/g,"").split(",")
+
+            // Selezione del contenitore
+            const container = document.querySelector('.checkbox-container');
+
+            // Generazione delle checkbox
+            Object.keys(itemList).forEach(function (item) {
+
+                const checkboxDiv = document.createElement('div');
+                checkboxDiv.className = 'checkbox-item';
+
+                // Creazione dell'elemento checkbox
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = `checkbox-${item}`;
+                checkbox.name = 'checkboxes';
+                checkbox.value = item;
+
+                // Creazione dell'etichetta per la checkbox
+                const label = document.createElement('label');
+                label.htmlFor = `checkbox-${item}`;
+                label.textContent = itemList[item];
+
+                // Aggiunta della checkbox e dell'etichetta al div
+                checkboxDiv.appendChild(checkbox);
+                checkboxDiv.appendChild(label);
+
+                // Aggiunta del div al contenitore
+                container.appendChild(checkboxDiv);
+            });
+        </script>
+    </div>
+
+</body>
+</html>
