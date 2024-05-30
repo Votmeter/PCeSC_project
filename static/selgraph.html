@@ -40,7 +40,7 @@
                 checkbox.type = 'checkbox';
                 checkbox.id = `checkbox-${item}`;
                 checkbox.name = 'checkboxes';
-                checkbox.value = item;
+                checkbox.value = itemList[item];
 
                 // Creazione dell'etichetta per la checkbox
                 const label = document.createElement('label');
@@ -54,8 +54,29 @@
                 // Aggiunta del div al contenitore
                 container.appendChild(checkboxDiv);
             });
+
+        function redirectToLink() {
+            // Ottieni tutte le checkbox selezionate
+            const checkboxes = document.querySelectorAll('input[name="checkboxes"]:checked');
+            let selectedValues = [];
+            console.log(checkboxes)
+            // Raccogli i valori delle checkbox selezionate
+            checkboxes.forEach((checkbox) => {
+                selectedValues.push(checkbox.value);
+            });
+            console.log(selectedValues.value)
+            // Costruisci il link di reindirizzamento
+            let params = selectedValues.map((value, index) => `${value}`).join(',');
+            console.log(params);
+            let baseUrl = "http://127.0.0.1:8080/multigraph5/";
+
+            let finalUrl = baseUrl + params;
+            console.log(finalUrl);
+            // Reindirizza l'utente
+            window.location.href = finalUrl;
+        }
         </script>
     </div>
-
+    <button onclick="redirectToLink()">Vai al Link</button>
 </body>
 </html>

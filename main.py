@@ -81,6 +81,18 @@ def graph5animated(s):
     d2 = json.loads(get_data(s)[0])
     return render_template('graph2.html', data=d2[:2],s=s, k=2)
 
+@app.route('/multigraph5/<s>', methods=['GET'])
+def multigraph(s):
+    print('ciao7')
+    S=s.replace(" ","").split(",")
+    print(S)
+    D=[]
+    for k in S:
+        d2 = json.loads(get_data(k)[0])
+        D.append(d2)
+    print(D)
+    return render_template('multigraph1.html', data=D)
+
 @app.route('/trajectory/<s>',methods=['GET'])
 def get_data(s):
     if db.collection(s).stream():
@@ -92,6 +104,8 @@ def get_data(s):
         return json.dumps(r),200
     else:
         return 'trajectory not found',404
+
+
 
 @app.route('/selgraph',methods=['GET'])
 def getlist():
