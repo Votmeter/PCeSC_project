@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Firestore Collections Dropdown</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
+        .left-panel {
+            width: 45%;
+        }
+        .right-panel {
+            width: 45%;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        textarea {
+            width: 100%;
+            height: 300px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+    </style>
+    <script>
+        // Funzione per ottenere i nomi delle collezioni dal backend
+        async function fetchCollections() {
+            const response = await fetch('/get_collections');
+            const collections = await response.json();
+            const dropdown = document.getElementById('collections-dropdown');
+
+            collections.forEach(collection => {
+                const option = document.createElement('option');
+                option.text = collection;
+                option.value = collection;
+                dropdown.add(option);
+            });
+        }
+
+        // Funzione per ottenere i documenti di una collezione selezionata
+        async function fetchDocuments(collectionName) {
+            const response = await fetch(`/get_documents/${collectionName}`);
+            const documents = await response.json();
+            const documentList = document.getElementById('documents-list');
+            documentList.innerHTML = ''; // Pulisce la lista dei documenti
+
+            for (const [docId, docData] of Object.entries(documents)) {
+                const listItem = document.createElement('li');
+                listItem.textContent = `ID: ${docId}, Data: ${JSON.stringify(docData)}`;
+                documentList.appendChild(listItem);
+            }
+        }
+
+        // Funzione chiamata quando cambia la selezione della collezione
+        function onCollectionChange(event) {
+            const collectionName = event.target.value;
+            if (collectionName) {
+                fetchDocuments(collectionName);
+                document.getElementById('edit-button').href = `/edit_collection.html?collection=${collectionName}`;
+            }
+        }
+
+        // Funzione per aggiungere una nuova collezione
+        async function addCollection() {
+            const collectionName = document.getElementById('new-collection-name').value;
+            const collectionId = document.getElementById('new-collection-id').value
+            const collectionData = document.getElementById('new-collection-json').value;
+
+            try {
+                const response = await fetch('/add_collection', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: collectionName,
+                        id: collectionId,
+                        data: JSON.parse(collectionData)
+                    })
+                });
+
+                if (response.ok) {
+                    alert('Collezione aggiunta con successo!');
+                    fetchCollections(); // Aggiorna la lista delle collezioni
+                } else {
+                    alert('Errore nell\'aggiunta della collezione.');
+                }
+            } catch (error) {
+                alert('Errore nel formato JSON.');
+            }
+        }
+
+        // Funzione per caricare un file JSON e popolare la textarea
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(event) {
+                const content = event.target.result;
+                document.getElementById('new-collection-json').value = content;
+            };
+
+            reader.readAsText(file);
+        }
+
+        // Chiamare la funzione quando la pagina è caricata
+        window.onload = fetchCollections;
+    </script>
+</head>
+<body>
+    <div class="left-panel">
+        <h1>Firestore Collections</h1>
+        <label for="collections-dropdown">Select a Collection:</label>
+        <select id="collections-dropdown" onchange="onCollectionChange(event)">
+            <option value="" disabled selected>Select a collection</option>
+        </select>
+
+        <a id="edit-button" href="#"><button>Modifica</button></a>
+
+        <h2>Documents</h2>
+        <ul id="documents-list"></ul>
+    </div>
+    <div class="right-panel">
+        <h1>Aggiungi Collezione</h1>
+        <label for="new-collection-name">Nome della nuova collezione:</label>
+        <input type="text" id="new-collection-name"><br><br>
+        <label for="new-collection-id">ID / IDs dei nuovi Documenti:</label>
+        <input type="text" id="new-collection-id"><br><br>
+        <label for="new-collection-json">Dati della collezione (formato JSON):</label><br>
+        <textarea id="new-collection-json" placeholder='{"documento1": {"campo1": "valore1"}, "documento2": {"campo1": "valore2"}}'></textarea><br><br>
+        <label for="file-upload">Carica un file JSON:</label>
+        <input type="file" id="file-upload" accept=".json" onchange="handleFileUpload(event)"><br><br>
+        <button onclick="addCollection()">Aggiungi Collezione</button>
+    </div>
+</body>
+</html>

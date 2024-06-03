@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Collection</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 300px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+    </style>
+    <script>
+        // Funzione per ottenere i documenti della collezione selezionata
+        async function fetchCollectionDocuments() {
+            const params = new URLSearchParams(window.location.search);
+            const collectionName = params.get('collection');
+
+            if (collectionName) {
+                const response = await fetch(`/get_documents/${collectionName}`);
+                const documents = await response.json();
+                document.getElementById('collection-documents').value = JSON.stringify(documents, null, 2);
+                document.getElementById('collection-name').value = collectionName;
+            }
+        }
+
+        // Funzione per salvare le modifiche ai documenti della collezione
+        async function saveCollectionDocuments() {
+            const collectionName = document.getElementById('collection-name').value;
+            const documentsData = document.getElementById('collection-documents').value;
+
+            try {
+                const response = await fetch(`/update_documents/${collectionName}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: documentsData
+                });
+
+                if (response.ok) {
+                    alert('Documenti aggiornati con successo!');
+                } else {
+                    alert('Errore nell\'aggiornamento dei documenti.');
+                }
+            } catch (error) {
+                alert('Errore nel formato JSON.');
+            }
+        }
+
+        // Chiamare la funzione quando la pagina è caricata
+        window.onload = fetchCollectionDocuments;
+    </script>
+</head>
+<body>
+    <h1>Edit Collection</h1>
+    <input type="hidden" id="collection-name">
+    <label for="collection-documents">Documenti della collezione (formato JSON):</label><br>
+    <textarea id="collection-documents" placeholder='{"documento1": {"campo1": "valore1"}, "documento2": {"campo1": "valore2"}}'></textarea><br>
+    <button onclick="saveCollectionDocuments()">Salva Modifiche</button>
+</body>
+</html>

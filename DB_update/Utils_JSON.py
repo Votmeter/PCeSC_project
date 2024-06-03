@@ -1,14 +1,20 @@
 import json
 def CreateJSONfromCSV(group):
-    
-    traj = {
-    "id": group.iloc[0,0],
-    "specie": group.iloc[0,1],
-    "technology": group.iloc[0,2],
+    traj =   {
+        f'{group.iloc[0,0]}': {
+        "specie": group.iloc[0,1].to_string(),
+        "technology": group.iloc[0,2].to_string(),
+        "coordinates": group['coordinates'].to_list(),
+        }
+   }
+    # traj = {
+    # "id": group.iloc[0,0],
+    # "specie": group.iloc[0,1],
+    # "technology": group.iloc[0,2],
 
-    "coordinates": group['coordinates'].to_list(),
-    "times": group['times'].to_list(),
-    }
+    # "coordinates": group['coordinates'].to_list(),
+    # "times": group['times'].to_list(),
+    # }
     return traj
 def JSONtoFile(traj, filename):
     with open(f"DB_update/json/{filename}.json", 'w') as file:
