@@ -84,7 +84,7 @@ def multigraph(s):
         d2 = json.loads(get_data(k)[0])
         D.append(d2)
     print(D)
-    return render_template('multigraph5.html', data=D)
+    return render_template('multigraph5.html', data=D, s=S)
 
 @app.route('/trajectory/<s>',methods=['GET'])
 def get_data(s):
