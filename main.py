@@ -32,7 +32,7 @@ def proposeswap_db_function(s):
     d2 = json.loads(get_data(s)[0])
     k = int(request.form["jsvar"])+1
     print(k)
-    return render_template('graph2.html', data=d2[:k], s=s, k=k)
+    return render_template('graph5animated.html', data=d2[:k], s=s, k=k)
 
 @login.user_loader
 def load_user(username):
@@ -58,28 +58,21 @@ def logout():
 
 @app.route('/',methods=['GET'])
 def main():
-    return render_template('graph.html')
-
-@app.route('/fire',methods=['GET'])
-def fire():
-    db = firestore.Client.from_service_account_json('credentials.json', database=db)
-    result = ''
-    for doc in db.collection('persone').stream():
-        result += (f'{doc.id} --> {doc.to_dict()}<br>')
-    return result
+    return render_template('graph5base.html')
 
 @app.route('/graph5/<s>', methods=['GET'])
 def graph2(s):
     print('ciao2')
     d2 = json.loads(get_data(s)[0])
     print(d2)
-    return render_template('graph1.html', data=d2)
+    return render_template('graph5base.html', data=d2)
 
 @app.route('/graph5animated/<s>', methods=['GET'])
 def graph5animated(s):
     print('ciao5')
-    d2 = json.loads(get_data(s)[0])
-    return render_template('graph2.html', data=d2[:2],s=s, k=2)
+    S = s.replace(" ", "").split(",")
+    d2 = json.loads(get_data(S[0])[0])
+    return render_template('graph5animated.html', data=d2[:2],s=S[0], k=2)
 
 @app.route('/multigraph5/<s>', methods=['GET'])
 def multigraph(s):
@@ -91,7 +84,7 @@ def multigraph(s):
         d2 = json.loads(get_data(k)[0])
         D.append(d2)
     print(D)
-    return render_template('multigraph1.html', data=D)
+    return render_template('multigraph5.html', data=D)
 
 @app.route('/trajectory/<s>',methods=['GET'])
 def get_data(s):
@@ -105,15 +98,21 @@ def get_data(s):
     else:
         return 'trajectory not found',404
 
-
-
-@app.route('/selgraph',methods=['GET'])
+@app.route('/selgraph5',methods=['GET'])
 def getlist():
     l=[]
     for doc in db.collections():
         l.append(doc.id)
     l=json.dumps(l)
-    return render_template('selgraph.html', l=l)
+    return render_template('selezionagrafico5.html', l=l)
+
+@app.route('/selgraph5animated',methods=['GET'])
+def getlistanimated():
+    l=[]
+    for doc in db.collections():
+        l.append(doc.id)
+    l=json.dumps(l)
+    return render_template('selezionagrafico5animato.html', l=l)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)
