@@ -3152,7 +3152,7 @@
 	#banner {
 		background-attachment: scroll,							fixed;
 		background-color: #666;
-		background-image: url("images/overlays.jpeg"), url("../../images/banner.jpg");
+		background-image: url("images/overlays.jpeg");
 		background-position: top left,						center center;
 		background-repeat: repeat,							no-repeat;
 		background-size: auto,							cover;
@@ -3696,11 +3696,11 @@
 		/* Main */
 
 			#main {
-				padding: 4em 0 0 0;
+				padding: 2em 0 0 0;
 			}
 
 				#main > header {
-					margin: 0 2em 1.5em 2em;
+					margin: 0 0.5em 0.5em 1em;
 				}
 
 					#main > header h2 {

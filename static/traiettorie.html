@@ -11,28 +11,34 @@
 <body class="landing is-preload">
 <div id="page-wrapper">
     <!-- Header -->
+
     <header id="header" class="alt">
-        <h1><a href="index.html">Tracciamento Uccelli</a></h1>
+        <h1><a href="index.html"> Tracciamento Larus  </a></h1>
         <nav id="nav">
             <ul>
-                <li><a href="index.html">Home</a></li>
                 <li>
-                    <a href="#">Tracciamento uccelli</a>
-                    <ul>
-                        <li><a href="grafico uno.html">Grafico uno</a></li>
-                        <li><a href="grafico due.html">Grafico due</a></li>
-                        <li><a href="grafico tre.html">Grafico tre</a></li>
-                        <li><a href="#">Inserisci dati</a></li>
-                    </ul>
+                        <li><a href="informazioni.html">Informazioni</a></li>
+                        <li>
+                            <a href="index.html">Tracciamento Uccelli</a>
+                            <ul>
+                                <li><a href="traiettorie.html">Traiettorie</a></li>
+                                <li><a href="corridoio_migratorio.html">Corridoio Migratorio</a></li>
+                                <li><a href="traiettorie_traslocate.html">Trettorie Traslocate</a></li>
+                                <li><a href="#">Inserisci dati</a></li>
+                            </ul>
+                        </li>
+                    <li><a href="accedi.html" class="button">Login</a></li>
                 </li>
-                <li><a href="accedi.html" class="button">Login</a></li>
             </ul>
         </nav>
     </header>
 
+
+
+
     <!-- Banner -->
     <section id="banner">
-        <h2>Grafico uno</h2>
+        <h2>Traiettorie</h2>
     </section>
 
     <!-- Main -->
@@ -57,18 +63,6 @@
 <script src="assets/js/util.js"></script>
 <script src="assets/js/main.js"></script>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-<!-- Configura la mappa Leaflet -->
-<script>
-    var map = L.map('mapid').setView([51.505, -0.09], 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-    }).addTo(map);
-
-    L.marker([51.5, -0.09]).addTo(map)
-        .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
-        .openPopup();
-</script>
 
 </body>
 </html>
