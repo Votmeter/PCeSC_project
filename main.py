@@ -1,3 +1,4 @@
+
 from flask import Flask, redirect, url_for, request, render_template
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required, UserMixin
 #from secret import secret_key
@@ -44,7 +45,6 @@ login = LoginManager(app)
 
 login.login_view = '/static/login.html'
 
-
 #database con username e password di quelle autenticati
 usersdb = {
     'marco':'mamei'
@@ -67,12 +67,6 @@ def root():
 def root_grafico():
     #return redirect('/static/index.html')
     return render_template('grafico uno.html', plot = grafici.create_plot())
-
-#pagina grafico 2
-@app.route('/static/grafico due.html')
-def root_grafico2():
-    #return redirect('/static/index.html')
-    return render_template('grafico due.html', plot = grafici.create_plot2())
 
 #soggetta al login che accede a:
 @app.route('/main')
@@ -115,4 +109,4 @@ def logout():
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)
 
-#ogni volta che faccio il login lui chiama la funzione login.user_loader: carico l'utente che voglio utilizzare e ogni volta devo rinizializzare il bar che avevo
+#ogni volta che faccio il login lui chiama la funzione login.user_loader: carico l'utente che voglio utilizzare e ogni volta devo rinizializzare

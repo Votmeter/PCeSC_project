@@ -1,29 +1,10 @@
-#from google.cloud import firestore
-import pandas as pd
-import plotly
 import plotly.graph_objects as go
 import plotly.express as px
 import json
-
 import os
-
-def create_plot2():
-
-	db = 'tesinapcesc'
-	coll = 'trajectories'
-	id = 'trajectories'
-
-	# db = firestore.Client.from_service_account_json('credentials.json', database=db)
-	df = pd.read_csv("document/gps.csv", header=0)
-
-	df = df.rename(columns={'individual-taxon-canonical-name': "Bird's Type", "location-long": "longitudine"})
-
-	fig = px.scatter_mapbox(df, lat="location-lat", lon="longitudine", color="individual-local-identifier",
-							# size="car_hours",
-							color_continuous_scale=px.colors.cyclical.IceFire, size_max=15,  # zoom=10,
-							mapbox_style="carto-positron")
-	return fig.to_json()
-
+import pandas as pd
+import plotly.express as px
+import json
 
 def create_plot():
 
@@ -31,13 +12,34 @@ def create_plot():
 	coll = 'trajectories'
 	id = 'trajectories'
 
-	#db = firestore.Client.from_service_account_json('credentials.json', database=db)
-	df=pd.read_csv("document/gps.csv", header=0)
+	df = pd.read_csv("document/gps.csv", header=0)
+	df = df.rename(columns={'individual-taxon-canonical-name': "Tipologia di uccello",
+        'location-long': "Longitudine",
+        'location-lat': "Latitudine",
+        'individual-local-identifier': 'animal-id'})
 
-	df = df.rename(columns = {'individual-taxon-canonical-name': "Bird's Type", "location-long": "longitudine"})
+	# Scatter plot for points
+	scatter = px.scatter_mapbox(df, lat="Latitudine", lon="Longitudine", color="animal-id",
+								color_continuous_scale=px.colors.cyclical.IceFire, size_max=15,
+								mapbox_style="carto-positron")
 
-	fig = px.scatter_mapbox(df, lat="location-lat", lon="longitudine", color="Bird's Type", #size="car_hours",
-	                  color_continuous_scale=px.colors.cyclical.IceFire, size_max=15, #zoom=10,
-	                  mapbox_style="carto-positron")
+	# Line plot for trajectories
+	line = px.line_mapbox(df, lat="Latitudine", lon="Longitudine", color="animal-id",
+						  mapbox_style="carto-positron")
 
+	# Combine scatter and line plots
+	fig = go.Figure()
+	for data in scatter.data:
+		data.showlegend = False  # Hide legend for scatter plot
+		fig.add_trace(data)
+	for data in line.data:
+		fig.add_trace(data)
+
+	fig.update_layout(mapbox_style="carto-positron")
 	return fig.to_json()
+
+# Generate the plots
+combined_plot_json2 = create_plot()
+
+fig2 = go.Figure(json.loads(combined_plot_json2))
+#fig2.show()
