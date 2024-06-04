@@ -20,50 +20,26 @@
         }
     </style>
     <script>
-        // Funzione per ottenere i documenti della collezione selezionata
-        async function fetchCollectionDocuments() {
-            const params = new URLSearchParams(window.location.search);
-            const collectionName = params.get('collection');
+            // Funzione per ottenere i documenti di una collezione selezionata
+            async function fetchDocuments(collectionName) {
+            const response = await fetch(`/get_documents/${collectionName}`);
+            const documents = await response.json();
+            const documentList = document.getElementById('documents-list');
+            documentList.innerHTML = ''; // Pulisce la lista dei documenti
 
-            if (collectionName) {
-                const response = await fetch(`/get_documents/${collectionName}`);
-                const documents = await response.json();
-                document.getElementById('collection-documents').value = JSON.stringify(documents, null, 2);
-                document.getElementById('collection-name').value = collectionName;
+            for (const [docId, docData] of Object.entries(documents)) {
+                const listItem = document.createElement('li');
+                listItem.textContent = `ID: ${docId}, Data: ${JSON.stringify(docData)}`;
+                documentList.appendChild(listItem);
             }
         }
-
-        // Funzione per salvare le modifiche ai documenti della collezione
-        async function saveCollectionDocuments() {
-            const collectionName = document.getElementById('collection-name').value;
-            const documentsData = document.getElementById('collection-documents').value;
-
-            try {
-                const response = await fetch(`/update_documents/${collectionName}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: documentsData
-                });
-
-                if (response.ok) {
-                    alert('Documenti aggiornati con successo!');
-                } else {
-                    alert('Errore nell\'aggiornamento dei documenti.');
-                }
-            } catch (error) {
-                alert('Errore nel formato JSON.');
-            }
-        }
-
-        // Chiamare la funzione quando la pagina è caricata
-        window.onload = fetchCollectionDocuments;
+        window.onload = fetchDocuments;
     </script>
 </head>
 <body>
     <h1>Edit Collection</h1>
     <input type="hidden" id="collection-name">
+
     <label for="collection-documents">Documenti della collezione (formato JSON):</label><br>
     <textarea id="collection-documents" placeholder='{"documento1": {"campo1": "valore1"}, "documento2": {"campo1": "valore2"}}'></textarea><br>
     <button onclick="saveCollectionDocuments()">Salva Modifiche</button>

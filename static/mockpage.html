@@ -60,9 +60,13 @@
         // Funzione chiamata quando cambia la selezione della collezione
         function onCollectionChange(event) {
             const collectionName = event.target.value;
+            console.log(collectionName)
             if (collectionName) {
-                fetchDocuments(collectionName);
-                document.getElementById('edit-button').href = `/edit_collection.html?collection=${collectionName}`;
+                // fetchDocuments(collectionName);
+                // document.getElementById('edit-button').href = `/edit_database/{collectionName}`;
+                const escapedCollectionName = encodeURIComponent(collectionName);
+                window.location.href = `/edit_database/${escapedCollectionName}`;
+
             }
         }
 
