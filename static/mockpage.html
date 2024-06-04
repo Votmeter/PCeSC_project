@@ -62,10 +62,10 @@
             const collectionName = event.target.value;
             console.log(collectionName)
             if (collectionName) {
-                // fetchDocuments(collectionName);
-                // document.getElementById('edit-button').href = `/edit_database/{collectionName}`;
-                const escapedCollectionName = encodeURIComponent(collectionName);
-                window.location.href = `/edit_database/${escapedCollectionName}`;
+                fetchDocuments(collectionName);
+                document.getElementById('edit-button').href = `/edit_database/{collectionName}`;
+                // const escapedCollectionName = encodeURIComponent(collectionName);
+                // window.location.href = `/edit_database/${escapedCollectionName}`;
 
             }
         }
