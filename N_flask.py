@@ -38,6 +38,13 @@ def get_collections():
     collection_names = [collection.id for collection in collections]
     return jsonify(collection_names)
 
+@app.route('/get_documents/<collection_name>', methods=['GET'])
+def det_documents(collection_name):
+    documents = db.collection(collection_name).get()
+    document_names = [document.id for document in documents]
+    return jsonify(document_names)
+
+
 # Endpoint per ottenere tutti i documenti di una collezione specifica
 @app.route('/get_documents/<collection_name>', methods=['GET'])
 def get_documents(collection_name):
@@ -83,16 +90,13 @@ def add_collection():
     return 'Collection added', 200
 
 # Route to get documents for a specific collection
-@app.route('/edit_database/<collection_name>', methods=['GET'])
-def db_edit(collection_name):    
-    docs = db.collection(collection_name).stream()
-    
-    documents = {doc.id: doc.to_dict() for doc in docs}
-    print(collection_name)
-    # Render the template with the document list
-    return send_from_directory('static','mockedit.html'),documents
-
-
+@app.route('/<collection_name>/<document_id>', methods=['GET'])
+def single_document(collection_name, document_id):
+    # print(collection_name +'   '+ document_id)
+    doc_ref = db.collection(collection_name).document(document_id)
+    doc = doc_ref.get()
+    print(json.dumps(doc, indent=4))
+    return jsonify(doc.to_dict())
 
     
 if __name__ == '__main__':
