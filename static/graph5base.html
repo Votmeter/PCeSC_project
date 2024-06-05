@@ -29,7 +29,7 @@ google.charts.setOnLoadCallback(myMap);
 function myMap() {
 
 var lat = [];
-const data={{data}};
+const data= {{data}};
 console.log(Object.keys(data).length);
 for (let i = 0; i <  (Object.keys(data).length); i++) {
   let gData = new google.maps.LatLng(data[i][0], data[i][1]);

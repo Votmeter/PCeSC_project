@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<html>
+<html>
+			<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+<head>
+    <title> Tracciamento Animali Selvatici </title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="/static/assets/css/main.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"/>
+    <noscript><link rel="stylesheet" href="assets/css/main.css" /></noscript>
+</head>
+<body class="landing is-preload">
+<div id="page-wrapper">
+    <!-- Header -->
+    <header id="header" class="alt">
+        <h1><a href="index.html">Tracciamento Uccelli</a></h1>
+        <nav id="nav">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li>
+                    <a href="#">Tracciamento uccelli</a>
+                    <ul>
+                        <li><a href="grafico uno.html">Grafico uno</a></li>
+                        <li><a href="grafico due.html">Grafico due</a></li>
+                        <li><a href="grafico tre.html">Grafico tre</a></li>
+                        <li><a href="#">Inserisci dati</a></li>
+                    </ul>
+                </li>
+                <li><a href="accedi.html" class="button">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Banner -->
+    <section id="banner">
+        <h2>Grafico uno</h2>
+    </section>
+
+    <!-- Main -->
+    <section id="main" class="container">
+        <section class="box special">
+            <header class="major">
+                <h2><br>Descrizione<br /></h2>
+                <p>Stai visualizzando la posizione del gabbiano.</p>
+            </header>
+            <!-- Aggiungi un elemento div per la mappa -->
+            <div id="mapid" style="height: 400px;"></div>
+        </section>
+    </section>
+</div>
+
+<!-- Scripts -->
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/jquery.dropotron.min.js"></script>
+<script src="assets/js/jquery.scrollex.min.js"></script>
+<script src="assets/js/browser.min.js"></script>
+<script src="assets/js/breakpoints.min.js"></script>
+<script src="assets/js/util.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<div id="googleMap" style="width:100%;height:400px;"></div>
+<!-- Configura la mappa Leaflet -->
+    <script>
+        function coloreCasualeEsadecimale() {
+        // Genera un numero casuale tra 0 e 16777215 (corrispondente a FFFFFF in esadecimale)
+        var colore = Math.floor(Math.random() * 16777215).toString(16);
+        // Aggiungi zeri iniziali se necessario per ottenere sempre 6 cifre esadecimali
+        while (colore.length < 6) {
+            colore = "0" + colore;
+        }
+        // Restituisci il colore preceduto da #
+        return "#" + colore;
+        }
+
+        async function createPlot() {
+            const data = JSON.parse({{data| tojson }});
+            console.log(data);
+            let colorscale=[];
+            let animal=[];
+            const long={};
+            const latt={};
+
+            for (x in data["animalid"]){
+            if (!(animal.includes(data["animalid"][x]))){
+                colorscale.push([data["animalid"][x],coloreCasualeEsadecimale()]);
+                //console.log(data["animalid"][x]);
+                animal.push(data["animalid"][x]);
+                latt[data["animalid"][x]]=[];
+                long[data["animalid"][x]]=[];
+            }
+            else {
+                latt[data["animalid"][x]].push(data["Latitudine"][x]);
+                long[data["animalid"][x]].push(data["Longitudine"][x]);
+            }
+            }
+            console.log(colorscale)
+            // Create the plot
+            const layout = {
+                mapbox: {
+                    style: 'carto-positron',
+                    center: { lat: 50, lon: 0 }, // Adjust center if necessary
+                    zoom: 1 // Adjust zoom if necessary
+                },
+                margin: { t: 0, b: 0 },
+                showlegend: false
+            };
+            console.log(animal);
+            for (x in animal){
+            console.log(x);
+            const scatterData = {
+                type: 'scattermapbox',
+                mode: 'markers',
+                lat: latt[animal[x]],
+                lon: long[animal[x]],
+                marker: { size: 10},
+                text: data['animalid'],
+                color: data['animalid'],
+                name: 'Line'
+            };
+            // Prepare data for line plot
+            const lineData = {
+                type: 'scattermapbox',
+                mode: 'lines',
+                lat: latt[animal[x]],
+                lon: long[animal[x]],
+                line: { width: 2 },
+                text: data['animalid'],
+                color: data['animalid'],
+                name: 'Line'
+            };
+            if(x==0){Plotly.newPlot('mapid', [lineData,scatterData], layout);}
+            Plotly.addTraces('mapid', [lineData, scatterData]);
+            }
+        }
+        // Call the function to create the plot
+        createPlot();
+    </script>
+</div>
+</body>
+</html>
+

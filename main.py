@@ -1,14 +1,11 @@
+import pandas as pd
 from flask import Flask,request,redirect,url_for,render_template
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required, UserMixin
 from secret import secret_key
 from google.cloud import firestore
-#from turbo_flask import Turbo
+import plotly.graph_objects as go
 import json
-import time
-from joblib import load
-from google.cloud import storage
-from google.cloud import pubsub_v1
-from google.auth import jwt
+
 
 class User(UserMixin):
     def __init__(self, username):
@@ -97,6 +94,33 @@ def get_data(s):
         return json.dumps(r),200
     else:
         return 'trajectory not found',404
+
+@app.route('/graph3',methods=['GET'])
+def root_grafico():
+    df={"id":[],"animalid":[],"Longitudine":[],"Latitudine":[]}
+    print(df)
+    i=0
+    for x in db.collections():
+        if i>10:
+            print(pd.DataFrame(df))
+            break
+        for doc in x.stream():
+            try:
+                df["Latitudine"].append(doc.to_dict()["lat"])
+                df["Longitudine"].append(doc.to_dict()["long"])
+                df["animalid"].append(x.id)
+                df["id"].append(doc.id)
+            except:
+                continue
+        print(len(df["Latitudine"]))
+        print(len(df["Longitudine"]))
+        print(len(df["animalid"]))
+        print(len(df["id"]))
+        i += 1
+    print(df)
+    #df=pd.DataFrame(df)
+    print(df)
+    return render_template('graph3.html', data=json.dumps(df))
 
 @app.route('/selgraph5',methods=['GET'])
 def getlist():
