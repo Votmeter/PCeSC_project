@@ -1,24 +1,21 @@
 
-from flask import Flask,redirect,url_for, request, send_from_directory
+from flask import Flask, redirect, request, render_template_string, jsonify,render_template
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required, UserMixin
 from secret import secret_key
-
+from prova_grafico4 import create_corridor_plot
 class User(UserMixin):
     def __init__(self, email):
         super().__init__()
-        self.id = email # id univoco per ogni email
+        self.id = email
         self.email = email
-        #self.par = {}
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = secret_key
-login = LoginManager(app)# LoginManager che gestisce il login della mia applicazione
-login.login_view = '/static/accedi.html' #tutte le volte che hai bisogno di far fare il login rimandalo a questa pagina
+login = LoginManager(app)
+login.login_view = '/static/accedi.html'
 
-
-#database con email e password di quelle autenticati
 usersdb = {
-    'marco':'mamei'
+    'marco': 'mamei'
 }
 
 @login.user_loader
@@ -27,47 +24,44 @@ def load_user(email):
         return User(email)
     return None
 
-#pagina iniziale che non è soggetta al login
 @app.route('/')
 def root():
     return redirect('/static/index.html')
-#soggetta al login che accede a:
+
 @app.route('/main')
-#funzioni successive a login_REQUIRED necessitano che sia stato realizzato il login per funzionare
-@login_required
-def index():
-    #oggetto del campo user current_user e posso accedere ai campi
-    return 'Hi '+current_user.email
+
+def main():
+    return 'Hi ' + current_user.email
 
 @app.route('/main2')
-@login_required
-def index2():
-    return 'Hi2 '+current_user.email
-#procedura di login:, end point login riceve le informazioni della form: email e password della form
+
+def main2():
+    return 'Hi2 ' + current_user.email
+
 @app.route('/login', methods=['POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('/main'))#main
-    email = request.values['e']#email
-    password = request.values['p']#password
-    next_page = request.values['next']
-    #accedere al parametro della form
-    #next_page = request.args.get('next')
-    #altrimenti login
-    #cercare un meccanismo in javascript che prima direttamente il javascript
+        return redirect(url_for('main'))
+    email = request.form.get('e')
+    password = request.form.get('p')
+    next_page = request.form.get('next', '/main')
+
     if email in usersdb and password == usersdb[email]:
-        login_user(User(email))#login_user è una funzione di libreria che serve a lui per tenere traccia se l'utente ha fatto il login
-        if not next_page:
-            #esistono librerie di flask per gestire le pagine dopo il login
-            next_page = '/main'
+        login_user(User(email))
         return redirect(next_page)
+
     return redirect('/static/login.html')
+
+@app.route('/corridor_plot')
+def corridor_plot():
+    create_corridor_plot()
+
+    return render_template('corridoio_migratorio.html')  # Renderizza il template HTML
 
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect('/')
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)
-
-#ogni volta che faccio il login lui chiama la funzione login.user_loader: carico l'utente che voglio utilizzare e ogni volta devo rinizializzare il bar che avevo
