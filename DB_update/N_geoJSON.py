@@ -1,24 +1,26 @@
 import json
 from Utils_JSON import CreateJSONfromGeoJSON
+from google.cloud import firestore 
 
 exfile = 'DB_update/json/ex.json'
-DB = "DB_update/json/trajectories.json"
-# input
-id = ""
-name = ""
-technology = ""
-times = []
 
+with open(exfile, 'r') as new:
 
-with open(exfile, 'r') as update:
-    data = json.load(update)
+    data = json.load(new)
     coordinates = data.get('features')[0].get('geometry', {}).get('coordinates')
-    traj = CreateJSONfromGeoJSON(id, name, technology, coordinates, times)
+    traj = {
+        "name": {
+            str(index): coord for index, coord in enumerate(coordinates)
 
 
-with open(DB, "r") as file:
-    dbtraj = json.load(file)
-    dbtraj.append(traj)
 
-with open(DB, "w") as file:
-    json.dump(dbtraj, file, indent=4)
+        }
+
+    }
+    print(coordinates)
+    print(json.dumps(traj, indent=4))
+
+
+
+
+
