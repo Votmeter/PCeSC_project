@@ -21,7 +21,6 @@ login.login_view = '/static/login.html'
 usersdb = { 'mess':'1234'}
 
 db = 'tesinapcesc'
-coll = 'trajectories'
 db = firestore.Client.from_service_account_json('credentials.json', database=db)
 
 @app.route('/sequence/<s>', methods=["GET", "POST"])
@@ -95,32 +94,33 @@ def get_data(s):
     else:
         return 'trajectory not found',404
 
+@app.route('/references',methods=['GET'])
+def get_references():
+    if db.collection("references").stream():
+        r={}
+        for doc in db.collection("references").stream():
+            w=doc.to_dict()["mod"]
+            v=doc.to_dict()["tras"]
+            r[doc.id]=[w, v]
+        return json.dumps(r),200
+    else:
+        return 'references not found',404
+
 @app.route('/graph3',methods=['GET'])
 def root_grafico():
-    df={"id":[],"animalid":[],"Longitudine":[],"Latitudine":[]}
-    print(df)
+    df={}
     i=0
     for x in db.collections():
-        if i>10:
-            print(pd.DataFrame(df))
+        if (i > 127):
             break
-        for doc in x.stream():
-            try:
-                df["Latitudine"].append(doc.to_dict()["lat"])
-                df["Longitudine"].append(doc.to_dict()["long"])
-                df["animalid"].append(x.id)
-                df["id"].append(doc.id)
-            except:
-                continue
-        print(len(df["Latitudine"]))
-        print(len(df["Longitudine"]))
-        print(len(df["animalid"]))
-        print(len(df["id"]))
-        i += 1
-    print(df)
-    #df=pd.DataFrame(df)
-    print(df)
-    return render_template('graph3.html', data=json.dumps(df))
+        try:
+            df[x.id]=json.loads(get_data(x.id)[0])
+            #print(x.id)
+            i+=1
+        except:
+            continue
+    ref=json.loads(get_references()[0])
+    return render_template('graph3.html', data=json.dumps(df),ref=json.dumps(ref))
 
 @app.route('/selgraph5',methods=['GET'])
 def getlist():

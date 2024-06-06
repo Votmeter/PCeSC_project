@@ -46,7 +46,12 @@
                 <p>Stai visualizzando la posizione del gabbiano.</p>
             </header>
             <!-- Aggiungi un elemento div per la mappa -->
-            <div id="mapid" style="height: 400px;"></div>
+            <div id="mapid1" style="height: 400px;"></div>
+            <div id="mapid2" style="height: 400px;"></div>
+            <div id="mapid3" style="height: 400px;"></div>
+            <div id="mapid4" style="height: 400px;"></div>
+            <div id="mapid5" style="height: 400px;"></div>
+            <div id="mapid6" style="height: 400px;"></div>
         </section>
     </section>
 </div>
@@ -60,46 +65,28 @@
 <script src="assets/js/util.js"></script>
 <script src="assets/js/main.js"></script>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<div id="googleMap" style="width:100%;height:400px;"></div>
 <!-- Configura la mappa Leaflet -->
     <script>
-        function coloreCasualeEsadecimale() {
-        // Genera un numero casuale tra 0 e 16777215 (corrispondente a FFFFFF in esadecimale)
-        var colore = Math.floor(Math.random() * 16777215).toString(16);
-        // Aggiungi zeri iniziali se necessario per ottenere sempre 6 cifre esadecimali
-        while (colore.length < 6) {
-            colore = "0" + colore;
-        }
-        // Restituisci il colore preceduto da #
-        return "#" + colore;
-        }
-
+        mapbox_access_token = 'pk.eyJ1Ijoiam1tZWFzZSIsImEiOiJjamljeWkwN3IwNjEyM3FtYTNweXV4YmV0In0.2zbgGCjbPTK7CToIg81kMw'
+        let colorlist =['#FF2D00', '#FF7C00', '#42FF00', '#00B4BF', '#0044FA', '#EC00FF', '#6800FF', '#00C9FF', '#766100', '#790000'];
+        let colorlist1 =['#FFA794', '#FFC894', '#AEFC92', '#B5F8FC', '#9DB8FF', '#FABFFF', '#C59EFF', '#A7ECFF', '#B6A86A', '#B46262'];
         async function createPlot() {
+            temp=0
             const data = JSON.parse({{data| tojson }});
+            const ref = JSON.parse({{ref| tojson }});
+            console.log(ref);
             console.log(data);
             let colorscale=[];
             let animal=[];
             const long={};
             const latt={};
-
-            for (x in data["animalid"]){
-            if (!(animal.includes(data["animalid"][x]))){
-                colorscale.push([data["animalid"][x],coloreCasualeEsadecimale()]);
-                //console.log(data["animalid"][x]);
-                animal.push(data["animalid"][x]);
-                latt[data["animalid"][x]]=[];
-                long[data["animalid"][x]]=[];
-            }
-            else {
-                latt[data["animalid"][x]].push(data["Latitudine"][x]);
-                long[data["animalid"][x]].push(data["Longitudine"][x]);
-            }
-            }
             console.log(colorscale)
             // Create the plot
-            const layout = {
+            var layout = {
                 mapbox: {
-                    style: 'carto-positron',
+                    accesstoken: mapbox_access_token,
+                    domain: {row: 0, column: 0},
+                    style: 'open-street-map',
                     center: { lat: 50, lon: 0 }, // Adjust center if necessary
                     zoom: 1 // Adjust zoom if necessary
                 },
@@ -107,34 +94,43 @@
                 showlegend: false
             };
             console.log(animal);
-            for (x in animal){
-            console.log(x);
-            const scatterData = {
-                type: 'scattermapbox',
-                mode: 'markers',
-                lat: latt[animal[x]],
-                lon: long[animal[x]],
-                marker: { size: 10},
-                text: data['animalid'],
-                color: data['animalid'],
-                name: 'Line'
-            };
-            // Prepare data for line plot
-            const lineData = {
-                type: 'scattermapbox',
-                mode: 'lines',
-                lat: latt[animal[x]],
-                lon: long[animal[x]],
-                line: { width: 2 },
-                text: data['animalid'],
-                color: data['animalid'],
-                name: 'Line'
-            };
-            if(x==0){Plotly.newPlot('mapid', [lineData,scatterData], layout);}
-            Plotly.addTraces('mapid', [lineData, scatterData]);
+            for (x in data){
+            let scatterData={}
+            let lineData={}
+            if(temp==0){Plotly.newPlot('mapid1', [lineData,scatterData], layout);}
+            if(temp==0){Plotly.newPlot('mapid2', [lineData,scatterData], layout);}
+            if(temp==0){Plotly.newPlot('mapid3', [lineData,scatterData], layout);}
+            if(temp==0){Plotly.newPlot('mapid4', [lineData,scatterData], layout);}
+            if(temp==0){Plotly.newPlot('mapid5', [lineData,scatterData], layout);}
+            if(temp==0){Plotly.newPlot('mapid6', [lineData,scatterData], layout);}
+            let latitudine=[];
+            for(k in data[x]){latitudine.push(data[x][k][0])}
+            let longitudine=[];
+            for(k in data[x]){longitudine.push(data[x][k][1])}
+            //console.log(longitudine);
+            clr=Math.floor(Math.random() * (10))
+            scatterData={}
+            lineData={}
+            scatterData = { type: 'scattermapbox', mode: 'markers', lat: latitudine, lon: longitudine, marker: { size: 7, color: colorlist[clr]}, text: x, name: 'Line'};
+            lineData = {type: 'scattermapbox', mode: 'lines', lat: latitudine, lon: longitudine, line: { width: 4, color: colorlist1[clr]}, text: x, name: 'Line'};
+            switch(ref[x][0]){
+                case "control":
+                    if(ref[x][1]=="translocated to Heligoland"){Plotly.addTraces('mapid1', [lineData, scatterData])};
+                    if(ref[x][1]=="translocated to Kazan"){Plotly.addTraces('mapid2', [lineData, scatterData])};
+                    break;
+                case "OLFAC":
+                    if(ref[x][1]=="translocated to Heligoland"){Plotly.addTraces('mapid3', [lineData, scatterData])};
+                    if(ref[x][1]=="translocated to Kazan"){Plotly.addTraces('mapid4', [lineData, scatterData])};
+                    break;
+                case "TRIGEM":
+                    if(ref[x][1]=="translocated to Heligoland"){Plotly.addTraces('mapid5', [lineData, scatterData])};
+                    if(ref[x][1]=="translocated to Kazan"){Plotly.addTraces('mapid6', [lineData, scatterData])};
+                    break;
+                }
+            temp+=1;
             }
         }
-        // Call the function to create the plot
+
         createPlot();
     </script>
 </div>
