@@ -1,5 +1,0 @@
-- id
-- name
-- technology
-- geometry [set of coordinates]
-- dates [set of dates]
