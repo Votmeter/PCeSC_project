@@ -168,3 +168,4 @@ templates
 DB_update/map.py
 keys
 DB_update/N_test.py
+secret.py
