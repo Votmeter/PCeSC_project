@@ -89,14 +89,33 @@ def add_collection():
 
     return 'Collection added', 200
 
-# Route to get documents for a specific collection
 @app.route('/<collection_name>/<document_id>', methods=['GET'])
 def single_document(collection_name, document_id):
-    # print(collection_name +'   '+ document_id)
+    # Ottieni il riferimento al documento
     doc_ref = db.collection(collection_name).document(document_id)
     doc = doc_ref.get()
-    print(json.dumps(doc, indent=4))
-    return jsonify(doc.to_dict())
+
+    # Verifica se il documento esiste
+    if doc.exists:
+        doc_dict = doc.to_dict()
+        return jsonify(doc_dict)
+    else:
+        return jsonify({"error": "Document not found"}), 404
+
+@app.route('/<collection_name>/<document_id>', methods=['POST'])
+def update_document(collection_name, document_id):
+    # Ottieni i dati JSON dalla richiesta
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+
+    # Ottieni il riferimento al documento
+    doc_ref = db.collection(collection_name).document(document_id)
+
+    # Aggiorna il documento
+    doc_ref.set(data, merge=True)
+
+    return jsonify({"success": True}), 200
 
     
 if __name__ == '__main__':

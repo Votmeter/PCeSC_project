@@ -106,15 +106,51 @@
         async function updateDocumentDataText() {
             const collectionName = document.getElementById('collections-dropdown').value;
             const documentId = document.getElementById('documents-dropdown').value;
-            console.log(collectionName+ "   " + documentId);
+            console.log(collectionName + "   " + documentId);
             try {
-                const content = await fetch(`/${collectionName}/${documentId}`).json();
-                document.getElementById('update-collection-json').value = content;
-            }catch (error) {
+                const response = await fetch(`/${collectionName}/${documentId}`);
+                if (!response.ok) {
+                    throw new Error('Errore nella caricazione del documento');
+                }
+                const content = await response.json();
+                document.getElementById('update-collection-json').value = JSON.stringify(content, null, 4);
+            } catch (error) {
                 alert('Errore nella caricazione del documento');
-    
+                console.error(error);
             }
         }
+
+        async function updateCollection() {
+            const collectionName = document.getElementById('collections-dropdown').value;
+            const documentId = document.getElementById('documents-dropdown').value;
+            const updatedContent = document.getElementById('update-collection-json').value;
+
+            try {
+                const response = await fetch(`/${collectionName}/${documentId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: updatedContent
+                });
+
+                if (!response.ok) {
+                    throw new Error('Errore nell\'aggiornamento del documento');
+                }
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('Documento aggiornato con successo');
+                } else {
+                    alert('Errore nell\'aggiornamento del documento');
+                }
+            } catch (error) {
+                alert('Errore nell\'aggiornamento del documento');
+                console.error(error);
+            }
+        }
+
+
 
         window.onload = fetchCollections;
     </script>
@@ -127,13 +163,15 @@
             <option value="" disabled selected>Select a collection</option>
         </select>
         <br />
-        <label for="documents-dropdown">Select a Collection:</label>
+        <label for="documents-dropdown">Select a Document:</label>
         <select id="documents-dropdown" onchange = updateDocumentDataText()>
             <option value="" disabled selected>Select a document</option>
         </select>
         <br />
         <label for="update-collection-json">Collezione selezionata</label><br>
         <textarea id="update-collection-json" placeholder='Nessuna collezione selezionata'></textarea><br><br>
+        <button onclick="updateCollection()">Aggiorna Collezione</button>
+
 
 
 
