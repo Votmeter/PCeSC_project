@@ -1,8 +1,5 @@
 <!DOCTYPE HTML>
 <html>
-<html>
-			<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-			<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
 <head>
     <title> Tracciamento Animali Selvatici </title>
     <meta charset="utf-8" />
@@ -10,6 +7,35 @@
     <link rel="stylesheet" href="/static/assets/css/main.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"/>
     <noscript><link rel="stylesheet" href="assets/css/main.css" /></noscript>
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: auto 1fr 1fr;
+            grid-template-rows: auto 1fr 1fr 1fr;
+            gap: 10px;
+            text-align: center;
+        }
+        .title {
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .subtitle {
+            font-size: 1.2em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .chart {
+            width: 100%;
+            height: 400px; /* Adjust height as needed */
+        }
+        .y-title {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+        }
+    </style>
 </head>
 <body class="landing is-preload">
 <div id="page-wrapper">
@@ -42,21 +68,31 @@
     <section id="main" class="container">
         <section class="box special">
             <header class="major">
-                <h2><br>Descrizione<br /></h2>
-                <p>Stai visualizzando la posizione del gabbiano.</p>
+                <h2><br>Visualizzazione traiettorie<br /></h2>
+                <p></p>
             </header>
             <!-- Aggiungi un elemento div per la mappa -->
-            <div id="mapid1" style="height: 400px;"></div>
-            <div id="mapid2" style="height: 400px;"></div>
-            <div id="mapid3" style="height: 400px;"></div>
-            <div id="mapid4" style="height: 400px;"></div>
-            <div id="mapid5" style="height: 400px;"></div>
-            <div id="mapid6" style="height: 400px;"></div>
+            <div class="grid-container">
+                <div></div>
+                <div class="title">Heligoland</div>
+                <div class="title">Kazan</div>
+                <div class="subtitle y-title">Control</div>
+                <div id="mapid1" class="chart"></div>
+                <div id="mapid2" class="chart"></div>
+                <div class="subtitle y-title">OLFAC</div>
+                <div id="mapid3" class="chart"></div>
+                <div id="mapid4" class="chart"></div>
+                <div class="subtitle y-title">TRIGEM</div>
+                <div id="mapid5" class="chart"></div>
+                <div id="mapid6" class="chart"></div>
+            </div>
         </section>
     </section>
 </div>
 
 <!-- Scripts -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
 <script src="assets/js/jquery.min.js"></script>
 <script src="assets/js/jquery.dropotron.min.js"></script>
 <script src="assets/js/jquery.scrollex.min.js"></script>
@@ -66,74 +102,74 @@
 <script src="assets/js/main.js"></script>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <!-- Configura la mappa Leaflet -->
-    <script>
-        mapbox_access_token = 'pk.eyJ1Ijoiam1tZWFzZSIsImEiOiJjamljeWkwN3IwNjEyM3FtYTNweXV4YmV0In0.2zbgGCjbPTK7CToIg81kMw'
-        let colorlist =['#FF2D00', '#FF7C00', '#42FF00', '#00B4BF', '#0044FA', '#EC00FF', '#6800FF', '#00C9FF', '#766100', '#790000'];
-        let colorlist1 =['#FFA794', '#FFC894', '#AEFC92', '#B5F8FC', '#9DB8FF', '#FABFFF', '#C59EFF', '#A7ECFF', '#B6A86A', '#B46262'];
-        async function createPlot() {
-            temp=0
-            const data = JSON.parse({{data| tojson }});
-            const ref = JSON.parse({{ref| tojson }});
-            console.log(ref);
-            console.log(data);
-            let colorscale=[];
-            let animal=[];
-            const long={};
-            const latt={};
-            console.log(colorscale)
-            // Create the plot
-            var layout = {
-                mapbox: {
-                    accesstoken: mapbox_access_token,
-                    domain: {row: 0, column: 0},
-                    style: 'open-street-map',
-                    center: { lat: 50, lon: 0 }, // Adjust center if necessary
-                    zoom: 1 // Adjust zoom if necessary
-                },
-                margin: { t: 0, b: 0 },
-                showlegend: false
-            };
-            console.log(animal);
-            for (x in data){
-            let scatterData={}
-            let lineData={}
-            if(temp==0){Plotly.newPlot('mapid1', [lineData,scatterData], layout);}
-            if(temp==0){Plotly.newPlot('mapid2', [lineData,scatterData], layout);}
-            if(temp==0){Plotly.newPlot('mapid3', [lineData,scatterData], layout);}
-            if(temp==0){Plotly.newPlot('mapid4', [lineData,scatterData], layout);}
-            if(temp==0){Plotly.newPlot('mapid5', [lineData,scatterData], layout);}
-            if(temp==0){Plotly.newPlot('mapid6', [lineData,scatterData], layout);}
-            let latitudine=[];
-            for(k in data[x]){latitudine.push(data[x][k][0])}
-            let longitudine=[];
-            for(k in data[x]){longitudine.push(data[x][k][1])}
+<script>
+    mapbox_access_token = 'pk.eyJ1Ijoiam1tZWFzZSIsImEiOiJjamljeWkwN3IwNjEyM3FtYTNweXV4YmV0In0.2zbgGCjbPTK7CToIg81kMw';
+    let colorlist =['#FF2D00', '#FF7C00', '#42FF00', '#00B4BF', '#0044FA', '#EC00FF', '#6800FF', '#00C9FF', '#766100', '#790000'];
+    let colorlist1 =['#FFA794', '#FFC894', '#AEFC92', '#B5F8FC', '#9DB8FF', '#FABFFF', '#C59EFF', '#A7ECFF', '#B6A86A', '#B46262'];
+    async function createPlot() {
+        temp=0;
+        const data = JSON.parse({{ data | tojson }});
+        const ref = JSON.parse({{ ref | tojson }});
+        console.log(ref);
+        console.log(data);
+        let colorscale=[];
+        let animal=[];
+        const long={};
+        const latt={};
+        console.log(colorscale);
+        // Create the plot
+        var layout = {
+            mapbox: {
+                accesstoken: mapbox_access_token,
+                domain: {row: 0, column: 0},
+                style: 'open-street-map',
+                center: { lat: 50, lon: 0 }, // Adjust center if necessary
+                zoom: 1 // Adjust zoom if necessary
+            },
+            margin: { t: 0, b: 0 },
+            showlegend: false,
+            xaxis: {visible: false},  // Hide the x-axis
+            yaxis: {visible: false},   // Hide the y-axis
+            autosize: true
+        };
+        console.log(animal);
+        for (x in data) {
+            let scatterData = {};
+            let lineData = {};
+            if(temp == 0){ Plotly.newPlot('mapid1', [lineData, scatterData], layout); }
+            if(temp == 0){ Plotly.newPlot('mapid2', [lineData, scatterData], layout); }
+            if(temp == 0){ Plotly.newPlot('mapid3', [lineData, scatterData], layout); }
+            if(temp == 0){ Plotly.newPlot('mapid4', [lineData, scatterData], layout); }
+            if(temp == 0){ Plotly.newPlot('mapid5', [lineData, scatterData], layout); }
+            if(temp == 0){ Plotly.newPlot('mapid6', [lineData, scatterData], layout); }
+            let latitudine = [];
+            for(k in data[x]){ latitudine.push(data[x][k][0]); }
+            let longitudine = [];
+            for(k in data[x]){ longitudine.push(data[x][k][1]); }
             //console.log(longitudine);
-            clr=Math.floor(Math.random() * (10))
-            scatterData={}
-            lineData={}
-            scatterData = { type: 'scattermapbox', mode: 'markers', lat: latitudine, lon: longitudine, marker: { size: 7, color: colorlist[clr]}, text: x, name: 'Line'};
-            lineData = {type: 'scattermapbox', mode: 'lines', lat: latitudine, lon: longitudine, line: { width: 4, color: colorlist1[clr]}, text: x, name: 'Line'};
+            clr = Math.floor(Math.random() * (10));
+            scatterData = { type: 'scattermapbox', mode: 'markers', lat: latitudine, lon: longitudine, marker: { size: 7, color: colorlist[clr]}, text: x, name: 'Line' };
+            lineData = { type: 'scattermapbox', mode: 'lines', lat: latitudine, lon: longitudine, line: { width: 4, color: colorlist1[clr]}, text: x, name: 'Line' };
             switch(ref[x][0]){
                 case "control":
-                    if(ref[x][1]=="translocated to Heligoland"){Plotly.addTraces('mapid1', [lineData, scatterData])};
-                    if(ref[x][1]=="translocated to Kazan"){Plotly.addTraces('mapid2', [lineData, scatterData])};
+                    if(ref[x][1] == "translocated to Heligoland"){ Plotly.addTraces('mapid1', [lineData, scatterData]); }
+                    if(ref[x][1] == "translocated to Kazan"){ Plotly.addTraces('mapid2', [lineData, scatterData]); }
                     break;
                 case "OLFAC":
-                    if(ref[x][1]=="translocated to Heligoland"){Plotly.addTraces('mapid3', [lineData, scatterData])};
-                    if(ref[x][1]=="translocated to Kazan"){Plotly.addTraces('mapid4', [lineData, scatterData])};
+                    if(ref[x][1] == "translocated to Heligoland"){ Plotly.addTraces('mapid3', [lineData, scatterData]); }
+                    if(ref[x][1] == "translocated to Kazan"){ Plotly.addTraces('mapid4', [lineData, scatterData]); }
                     break;
                 case "TRIGEM":
-                    if(ref[x][1]=="translocated to Heligoland"){Plotly.addTraces('mapid5', [lineData, scatterData])};
-                    if(ref[x][1]=="translocated to Kazan"){Plotly.addTraces('mapid6', [lineData, scatterData])};
+                    if(ref[x][1] == "translocated to Heligoland"){ Plotly.addTraces('mapid5', [lineData, scatterData]); }
+                    if(ref[x][1] == "translocated to Kazan"){ Plotly.addTraces('mapid6', [lineData, scatterData]); }
                     break;
-                }
-            temp+=1;
             }
+            temp += 1;
         }
+    }
 
-        createPlot();
-    </script>
-</div>
+    createPlot();
+</script>
 </body>
 </html>
 
