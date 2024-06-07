@@ -1,73 +1,142 @@
-
-from flask import Flask,redirect,url_for, request, send_from_directory
+import pandas as pd
+from flask import Flask,request,redirect,url_for,render_template
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required, UserMixin
 from secret import secret_key
+from google.cloud import firestore
+import plotly.graph_objects as go
+import json
+
 
 class User(UserMixin):
-    def __init__(self, email):
+    def __init__(self, username):
         super().__init__()
-        self.id = email # id univoco per ogni email
-        self.email = email
-        #self.par = {}
+        self.id = username
+        self.username = username
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="static")
 app.config['SECRET_KEY'] = secret_key
-login = LoginManager(app)# LoginManager che gestisce il login della mia applicazione
-login.login_view = '/static/accedi.html' #tutte le volte che hai bisogno di far fare il login rimandalo a questa pagina
+login = LoginManager(app)
+login.login_view = '/static/login.html'
 
+usersdb = { 'mess':'1234'}
 
-#database con email e password di quelle autenticati
-usersdb = {
-    'marco':'mamei'
-}
+db = 'tesinapcesc'
+db = firestore.Client.from_service_account_json('credentials.json', database=db)
+
+@app.route('/sequence/<s>', methods=["GET", "POST"])
+def proposeswap_db_function(s):
+    d2 = json.loads(get_data(s)[0])
+    k = int(request.form["jsvar"])+1
+    print(k)
+    return render_template('graph5animated.html', data=d2[:k], s=s, k=k)
 
 @login.user_loader
-def load_user(email):
-    if email in usersdb:
-        return User(email)
+def load_user(username):
+    if username in usersdb:
+        return User(username)
     return None
 
-#pagina iniziale che non è soggetta al login
-@app.route('/')
-def root():
-    return redirect('/static/index.html')
-#soggetta al login che accede a:
-@app.route('/main')
-#funzioni successive a login_REQUIRED necessitano che sia stato realizzato il login per funzionare
-@login_required
-def index():
-    #oggetto del campo user current_user e posso accedere ai campi
-    return 'Hi '+current_user.email
-
-@app.route('/main2')
-@login_required
-def index2():
-    return 'Hi2 '+current_user.email
-#procedura di login:, end point login riceve le informazioni della form: email e password della form
 @app.route('/login', methods=['POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('/main'))#main
-    email = request.values['e']#email
-    password = request.values['p']#password
-    next_page = request.values['next']
-    #accedere al parametro della form
-    #next_page = request.args.get('next')
-    #altrimenti login
-    #cercare un meccanismo in javascript che prima direttamente il javascript
-    if email in usersdb and password == usersdb[email]:
-        login_user(User(email))#login_user è una funzione di libreria che serve a lui per tenere traccia se l'utente ha fatto il login
-        if not next_page:
-            #esistono librerie di flask per gestire le pagine dopo il login
-            next_page = '/main'
-        return redirect(next_page)
+        return redirect(url_for('/sensors'))
+    username = request.values['u']
+    password = request.values['p']
+    if username in usersdb and password == usersdb[username]:
+        login_user(User(username))
+        return redirect('/sensors')
     return redirect('/static/login.html')
 
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect('/')
+
+@app.route('/',methods=['GET'])
+def main():
+    return render_template('graph5base.html')
+
+@app.route('/graph5/<s>', methods=['GET'])
+def graph2(s):
+    print('ciao2')
+    d2 = json.loads(get_data(s)[0])
+    print(d2)
+    return render_template('graph5base.html', data=d2)
+
+@app.route('/graph5animated/<s>', methods=['GET'])
+def graph5animated(s):
+    print('ciao5')
+    S = s.replace(" ", "").split(",")
+    d2 = json.loads(get_data(S[0])[0])
+    return render_template('graph5animated.html', data=d2[:2],s=S[0], k=2)
+
+@app.route('/multigraph5/<s>', methods=['GET'])
+def multigraph(s):
+    print('ciao7')
+    S=s.replace(" ","").split(",")
+    print(S)
+    D=[]
+    for k in S:
+        d2 = json.loads(get_data(k)[0])
+        D.append(d2)
+    print(D)
+    return render_template('multigraph5.html', data=D, s=S)
+
+@app.route('/trajectory/<s>',methods=['GET'])
+def get_data(s):
+    if db.collection(s).stream():
+        r=[]
+        for doc in db.collection(s).stream():
+            w=doc.to_dict()["lat"]
+            v=doc.to_dict()["long"]
+            r.append([w, v])
+        return json.dumps(r),200
+    else:
+        return 'trajectory not found',404
+
+@app.route('/references',methods=['GET'])
+def get_references():
+    if db.collection("references").stream():
+        r={}
+        for doc in db.collection("references").stream():
+            w=doc.to_dict()["mod"]
+            v=doc.to_dict()["tras"]
+            r[doc.id]=[w, v]
+        return json.dumps(r),200
+    else:
+        return 'references not found',404
+
+@app.route('/graph3',methods=['GET'])
+def root_grafico():
+    df={}
+    i=0
+    for x in db.collections():
+        if (i > 127):
+            break
+        try:
+            df[x.id]=json.loads(get_data(x.id)[0])
+            #print(x.id)
+            i+=1
+        except:
+            continue
+    ref=json.loads(get_references()[0])
+    return render_template('graph3.html', data=json.dumps(df),ref=json.dumps(ref))
+
+@app.route('/selgraph5',methods=['GET'])
+def getlist():
+    l=[]
+    for doc in db.collections():
+        l.append(doc.id)
+    l=json.dumps(l)
+    return render_template('selezionagrafico5.html', l=l)
+
+@app.route('/selgraph5animated',methods=['GET'])
+def getlistanimated():
+    l=[]
+    for doc in db.collections():
+        l.append(doc.id)
+    l=json.dumps(l)
+    return render_template('selezionagrafico5animato.html', l=l)
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)
-
-#ogni volta che faccio il login lui chiama la funzione login.user_loader: carico l'utente che voglio utilizzare e ogni volta devo rinizializzare il bar che avevo
