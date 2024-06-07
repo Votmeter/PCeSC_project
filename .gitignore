@@ -160,4 +160,5 @@ cython_debug/
 .idea/
 app.yaml
 credentials.json
-.static/assets/
+static/assets/
+static/images/
