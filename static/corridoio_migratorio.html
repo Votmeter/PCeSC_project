@@ -52,6 +52,12 @@
 
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function() {
+            function getStandardDeviation (array) {
+                  if (!array || array.length === 0) {return 0;}
+                  const n = array.length
+                  const mean = array.reduce((a, b) => a + b) / n
+                  return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n)
+            }
             // Funzione per calcolare la distanza utilizzando la formula dell'haversine
             function haversine(lat1, lon1, lat2, lon2) {
                 const R = 6371; // Raggio della Terra in km
@@ -63,46 +69,66 @@
                 const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
                 return R * c;
             }
-
             // Funzione per creare il grafico del corridoio migratorio
-            function createCorridorPlot(data) {
+            async function createCorridorPlot() {
                 // Calcola la mediana delle Longitudini
-                const longitudes = data.map(entry => entry.Longitudine);
+                const data = JSON.parse({{ data | tojson }});
+                const ref = JSON.parse({{ ref | tojson }});
+                console.log(data);
+                const longitudes = [];
+                for( x in data){
+                    //console.log(x)
+                    for(y in data[x]){
+                        //console.log(y)
+                        longitudes.push(data[x][y][1]);
+                    }
+                };
+                console.log(longitudes)
                 const longTrajectoryMedian = d3.median(longitudes);
-                console.log("Il punto medio per le Longitudini è:", longTrajectoryMedian);
+                console.log("La mediana per le Longitudini è:", longTrajectoryMedian);
 
                 // Calcola la distanza tra ciascun punto e la longitudine media, tenendo conto del segno
-                data.forEach(entry => {
-                    entry.Distance_to_mean = haversine(
-                        entry.Latitudine, entry.Longitudine,
-                        entry.Latitudine, longTrajectoryMedian
-                    ) * (entry.Longitudine < longTrajectoryMedian ? -1 : 1);
-                });
-
+                Distance_to_mean={}
+                latitude=[]
+                Groups=[{},{},{},{},{},{}]
+                for(const i of Array(30).keys()){Groups[0][i+29]=[];Groups[1][i+29]=[];Groups[2][i+29]=[];Groups[3][i+29]=[];Groups[4][i+29]=[];Groups[5][i+29]=[]}
+                console.log(latitude)
+                for(x in data){
+                    console.log(x)
+                    for(y in data[x]){
+                          //Distance_to_mean = haversine(data[x][y][0], data[x][y][1], data[x][y][0], longTrajectoryMedian) ;
+                          Distance_to_mean = (data[x][y][1] - longTrajectoryMedian)*100
+                          //console.log(y)
+                          try{
+                          switch(ref[x][0]){
+                                case "control":
+                                    if(ref[x][1] == "translocated to Heligoland"){for(const i of Array(30).keys()){if(data[x][y][0]<i+29 && data[x][y][0]>i+29-1){Groups[0][i+29].push(Distance_to_mean)}}}
+                                    if(ref[x][1] == "translocated to Kazan"){for(const i of Array(30).keys()){if(data[x][y][0]<i+29 && data[x][y][0]>i+29-1){Groups[1][i+29].push(Distance_to_mean)}}}
+                                    break;
+                                case "OLFAC":
+                                    if(ref[x][1] == "translocated to Heligoland"){for(const i of Array(30).keys()){if(data[x][y][0]<i+29 &&data[x][y][0]>i+29-1){Groups[2][i+29].push(Distance_to_mean)}}}
+                                    if(ref[x][1] == "translocated to Kazan"){for(const i of Array(30).keys()){if(data[x][y][0]<i+29 &&data[x][y][0]>i+29-1){Groups[3][i+29].push(Distance_to_mean)}}}
+                                    break;
+                                case "TRIGEM":
+                                    if(ref[x][1] == "translocated to Heligoland"){for(const i of Array(30).keys()){if(data[x][y][0]<i+29 &&data[x][y][0]>i+29-1){Groups[4][i+29].push(Distance_to_mean)}}}
+                                    if(ref[x][1] == "translocated to Kazan"){for(const i of Array(30).keys()){if(data[x][y][0]<i+29 &&data[x][y][0]>i+29-1){Groups[5][i+29].push(Distance_to_mean)}}}
+                                    break;
+                          }
+                          }  catch(err){continue;};
+                    }
+                }
+                console.log(Groups[0])
                 // Raggruppa i dati per 'Origine', 'Tipologia di uccello', e 'Latitudine' e calcola le distanze medie
-                const grouped = d3.group(data, d => d.Origine, d => d['Tipologia di uccello'], d => d.Latitudine);
-                const distanceMeans = [];
-                const distanceStds = [];
-                grouped.forEach((origineData, origine) => {
-                    origineData.forEach((birdTypeData, birdType) => {
-                        birdTypeData.forEach((latData, lat) => {
-                            const distanceMean = d3.mean(latData, d => d.Distance_to_mean);
-                            const distanceStd = d3.deviation(latData, d => d.Distance_to_mean);
-                            distanceMeans.push({ Origine: origine, BirdType: birdType, Latitudine: lat, Distance_mean: distanceMean });
-                            distanceStds.push({ Origine: origine, BirdType: birdType, Latitudine: lat, Distance_std: distanceStd });
-                        });
-                    });
-                });
-
-                // Raggruppa i dati per 'Origine' e 'Latitudine' e calcola i punti medi per ciascuna latitudine
-                const meanPoints = d3.group(data, d => d.Origine, d => d.Latitudine);
-                const longitudeMeans = [];
-                meanPoints.forEach((origineData, origine) => {
-                    origineData.forEach((latData, lat) => {
-                        const longitudeMean = d3.mean(latData, d => d.Longitudine);
-                        longitudeMeans.push({ Origine: origine, Latitudine: lat, Longitudine_mean: longitudeMean });
-                    });
-                });
+                let curves=[{"lat":[],"mean":[],"std":[]},{"lat":[],"mean":[],"std":[]},{"lat":[],"mean":[],"std":[]},{"lat":[],"mean":[],"std":[]},{"lat":[],"mean":[],"std":[]},{"lat":[],"mean":[],"std":[]}]
+                for(x in Groups[0]){
+                    for(k in curves){
+                        const average = Groups[k][x].reduce((a, b) => a + b,0) / Groups[k][x].length;
+                        curves[k]["lat"].push(x);
+                        curves[k]["mean"].push(average);
+                        curves[k]["std"].push(getStandardDeviation(Groups[k][x]));
+                    }
+                }
+                console.log(curves[0]);
 
                 // Creazione del grafico
                 const corridorPlot = document.getElementById('corridorPlot');
@@ -110,47 +136,39 @@
                     title: 'Distanze Medie degli Uccelli Traslocati dal Corridoio Migratorio',
                     xaxis: { title: 'Distanza dal corridoio migratorio (km)' },
                     yaxis: { title: 'Latitudine' },
-                    legend: { x: 1, y: 1 }
+                    legend: { x: 1, y: 1 },
+                    widht:400,
+                    height:800,
                 };
                 const traces = [];
                 const colorMap = {
-                    'Helgoland': 'blue',
-                    'Kazan': 'green'
+                    0: 'blue',
+                    1: 'blue',
+                    2: 'red',
+                    3: 'red',
+                    4: 'green',
+                    5: 'green',
                 };
 
-                distanceMeans.forEach(entry => {
-                    const stdDev = distanceStds.find(d => d.Origine === entry.Origine && d.BirdType === entry.BirdType && d.Latitudine === entry.Latitudine).Distance_std;
+                for(x in curves){
                     const trace = {
-                        x: [entry.Distance_mean],
-                        y: [entry.Latitudine],
+                        x: curves[x]["mean"],
+                        y: curves[x]["lat"],
                         error_x: {
                             type: 'data',
-                            array: [stdDev],
+                            array: curves[x]["std"],
                             visible: true
                         },
                         type: 'scatter',
                         mode: 'lines+markers',
-                        name: ${entry.Origine} - ${entry.BirdType},
-                        marker: { color: colorMap[entry.Origine] }
+                        marker: { color: colorMap[x] }
                     };
                     traces.push(trace);
-                });
-
-                longitudeMeans.forEach(entry => {
-                    const trace = {
-                        x: [entry.Longitudine_mean],
-                        y: [entry.Latitudine],
-                        type: 'scatter',
-                        mode: 'markers',
-                        name: ${entry.Origine} - Punti medi,
-                        marker: { size: 10, color: colorMap[entry.Origine] }
-                    };
-                    traces.push(trace);
-                });
+                };
 
                 Plotly.newPlot(corridorPlot, traces, layout);
-            }
 
+            };
             // Dati ricevuti dal server
             var dataFromServer = {{ data | tojson }};
             createCorridorPlot(dataFromServer);

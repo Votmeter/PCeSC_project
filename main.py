@@ -3,7 +3,6 @@ from flask import Flask,request,redirect,url_for,render_template
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required, UserMixin
 from secret import secret_key
 from google.cloud import firestore
-import plotly.graph_objects as go
 import json
 
 
@@ -20,7 +19,7 @@ login.login_view = '/static/login.html'
 
 usersdb = { 'mess':'1234'}
 
-db = 'tesinapcesc'
+db = '(default)'
 db = firestore.Client.from_service_account_json('credentials.json', database=db)
 
 #pagina iniziale che non è soggetta al login
@@ -110,7 +109,7 @@ def get_references():
     else:
         return 'references not found',404
 
-@app.route('/static/graph3.html')
+@app.route('/graph3')
 def root_grafico():
     df={}
     i=0
@@ -126,7 +125,7 @@ def root_grafico():
     ref=json.loads(get_references()[0])
     return render_template('graph3.html', data=json.dumps(df),ref=json.dumps(ref))
 
-@app.route('/static/selezionagrafico5.html')
+@app.route('/selgraph')
 def getlist():
     l=[]
     for doc in db.collections():
@@ -134,7 +133,7 @@ def getlist():
     l=json.dumps(l)
     return render_template('selezionagrafico5.html', l=l)
 
-@app.route('/static/selezionagrafico5animato.html')
+@app.route('/selgraphanimato')
 def getlistanimated():
     l=[]
     for doc in db.collections():
