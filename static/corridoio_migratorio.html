@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Corridorio Migratorio</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="/static/assets/css/main.css" />
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body class="landing is-preload">
+    <div id="page-wrapper">
+        <!-- Header -->
+        <header id="header" class="alt">
+            <h1><a href="index.html">Tracciamento Uccelli</a></h1>
+            <nav id="nav">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="informazioni.html">Informazioni</a></li>
+                    <li>
+                        <a href="#">Tracciamento uccelli</a>
+                        <ul>
+                            <li><a href="grafico uno.html">Grafico uno</a></li>
+                            <li><a href="grafico due.html">Grafico due</a></li>
+                            <li><a href="grafico tre.html">Grafico tre</a></li>
+                            <li><a href="#">Inserisci dati</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="accedi.html" class="button">Login</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <!-- Main -->
+        <section id="main" class="container">
+            <section class="box special">
+                <header class="major">
+                    <h2>Visualizzazione del Corridoio Migratorio</h2>
+                </header>
+                <div id="corridorPlot"></div>
+            </section>
+        </section>
+    </div>
+
+    <script src="/static/assets/js/jquery.min.js"></script>
+    <script src="/static/assets/js/jquery.scrolly.min.js"></script>
+    <script src="/static/assets/js/jquery.scrollex.min.js"></script>
+    <script src="/static/assets/js/browser.min.js"></script>
+    <script src="/static/assets/js/breakpoints.min.js"></script>
+    <script src="/static/assets/js/util.js"></script>
+    <script src="/static/assets/js/main.js"></script>
+
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            // Funzione per calcolare la distanza utilizzando la formula dell'haversine
+            function haversine(lat1, lon1, lat2, lon2) {
+                const R = 6371; // Raggio della Terra in km
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLon = (lon2 - lon1) * Math.PI / 180;
+                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                          Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                          Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                return R * c;
+            }
+
+            // Funzione per creare il grafico del corridoio migratorio
+            function createCorridorPlot(data) {
+                // Calcola la mediana delle Longitudini
+                const longitudes = data.map(entry => entry.Longitudine);
+                const longTrajectoryMedian = d3.median(longitudes);
+                console.log("Il punto medio per le Longitudini è:", longTrajectoryMedian);
+
+                // Calcola la distanza tra ciascun punto e la longitudine media, tenendo conto del segno
+                data.forEach(entry => {
+                    entry.Distance_to_mean = haversine(
+                        entry.Latitudine, entry.Longitudine,
+                        entry.Latitudine, longTrajectoryMedian
+                    ) * (entry.Longitudine < longTrajectoryMedian ? -1 : 1);
+                });
+
+                // Raggruppa i dati per 'Origine', 'Tipologia di uccello', e 'Latitudine' e calcola le distanze medie
+                const grouped = d3.group(data, d => d.Origine, d => d['Tipologia di uccello'], d => d.Latitudine);
+                const distanceMeans = [];
+                const distanceStds = [];
+                grouped.forEach((origineData, origine) => {
+                    origineData.forEach((birdTypeData, birdType) => {
+                        birdTypeData.forEach((latData, lat) => {
+                            const distanceMean = d3.mean(latData, d => d.Distance_to_mean);
+                            const distanceStd = d3.deviation(latData, d => d.Distance_to_mean);
+                            distanceMeans.push({ Origine: origine, BirdType: birdType, Latitudine: lat, Distance_mean: distanceMean });
+                            distanceStds.push({ Origine: origine, BirdType: birdType, Latitudine: lat, Distance_std: distanceStd });
+                        });
+                    });
+                });
+
+                // Raggruppa i dati per 'Origine' e 'Latitudine' e calcola i punti medi per ciascuna latitudine
+                const meanPoints = d3.group(data, d => d.Origine, d => d.Latitudine);
+                const longitudeMeans = [];
+                meanPoints.forEach((origineData, origine) => {
+                    origineData.forEach((latData, lat) => {
+                        const longitudeMean = d3.mean(latData, d => d.Longitudine);
+                        longitudeMeans.push({ Origine: origine, Latitudine: lat, Longitudine_mean: longitudeMean });
+                    });
+                });
+
+                // Creazione del grafico
+                const corridorPlot = document.getElementById('corridorPlot');
+                const layout = {
+                    title: 'Distanze Medie degli Uccelli Traslocati dal Corridoio Migratorio',
+                    xaxis: { title: 'Distanza dal corridoio migratorio (km)' },
+                    yaxis: { title: 'Latitudine' },
+                    legend: { x: 1, y: 1 }
+                };
+                const traces = [];
+                const colorMap = {
+                    'Helgoland': 'blue',
+                    'Kazan': 'green'
+                };
+
+                distanceMeans.forEach(entry => {
+                    const stdDev = distanceStds.find(d => d.Origine === entry.Origine && d.BirdType === entry.BirdType && d.Latitudine === entry.Latitudine).Distance_std;
+                    const trace = {
+                        x: [entry.Distance_mean],
+                        y: [entry.Latitudine],
+                        error_x: {
+                            type: 'data',
+                            array: [stdDev],
+                            visible: true
+                        },
+                        type: 'scatter',
+                        mode: 'lines+markers',
+                        name: ${entry.Origine} - ${entry.BirdType},
+                        marker: { color: colorMap[entry.Origine] }
+                    };
+                    traces.push(trace);
+                });
+
+                longitudeMeans.forEach(entry => {
+                    const trace = {
+                        x: [entry.Longitudine_mean],
+                        y: [entry.Latitudine],
+                        type: 'scatter',
+                        mode: 'markers',
+                        name: ${entry.Origine} - Punti medi,
+                        marker: { size: 10, color: colorMap[entry.Origine] }
+                    };
+                    traces.push(trace);
+                });
+
+                Plotly.newPlot(corridorPlot, traces, layout);
+            }
+
+            // Dati ricevuti dal server
+            var dataFromServer = {{ data | tojson }};
+            createCorridorPlot(dataFromServer);
+        });
+    </script>
+</body>
+</html>
