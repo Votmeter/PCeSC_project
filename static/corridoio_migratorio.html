@@ -11,7 +11,7 @@
 <body class="landing is-preload">
     <div id="page-wrapper">
         <!-- Header -->
-        <header id="header" class="alt">
+        <header id="header">
             <h1><a href="index.html">Tracciamento Uccelli</a></h1>
             <nav id="nav">
                 <ul>
@@ -20,11 +20,13 @@
                     <li>
                         <a href="#">Tracciamento uccelli</a>
                         <ul>
-                            <li><a href="grafico uno.html">Grafico uno</a></li>
-                            <li><a href="grafico due.html">Grafico due</a></li>
-                            <li><a href="grafico tre.html">Grafico tre</a></li>
-                            <li><a href="#">Inserisci dati</a></li>
+                            <li><a href="/graph3">Grafico Due</a></li>
+                            <li><a href="/generate_corridor_plot">Corridoio Migratorio</a></li>
+                            <li><a href="/selgraph">Grafico Cinque</a></li>
+                            <li><a href="/selgraphanimato">Grafico Cinque Animato</a></li>
+                            <li><a href="inserisci_dati.html">Inserisci dati</a></li>
                         </ul>
+
                     </li>
                     <li><a href="accedi.html" class="button">Login</a></li>
                 </ul>
@@ -149,7 +151,14 @@
                     4: 'green',
                     5: 'green',
                 };
-
+                const indices = [
+                { x: 0, name: 'Heligoland - control' },
+                { x: 2, name: 'Heligoland - OLFAC' },
+                { x: 4, name: 'Heligoland - TRIGEM' },
+                { x: 1, name: 'Kazan - control' },
+                { x: 3, name: 'Kazan - OLFAC' },
+                { x: 5, name: 'Kazan - TRIGEM' }
+                ];
                 for(x in curves){
                     const trace = {
                         x: curves[x]["mean"],
@@ -161,7 +170,8 @@
                         },
                         type: 'scatter',
                         mode: 'lines+markers',
-                        marker: { color: colorMap[x] }
+                        marker: { color: colorMap[x] },
+                        name: indices[x].name  // Assegna il nome agli indici
                     };
                     traces.push(trace);
                 };
