@@ -45,98 +45,98 @@
     <section id="main" class="container">
         <section class="box special">
            <script>
-        // Funzione per ottenere i nomi delle collezioni dal backend
-        async function fetchCollections() {
-            const response = await fetch('/get_collections');
-            const collections = await response.json();
-            const dropdown = document.getElementById('collections-dropdown');
+            // Funzione per ottenere i nomi delle collezioni dal backend
+            async function fetchCollections() {
+                const response = await fetch('/get_collections');
+                const collections = await response.json();
+                const dropdown = document.getElementById('collections-dropdown');
 
-            collections.forEach(collection => {
-                const option = document.createElement('option');
-                option.text = collection;
-                option.value = collection;
-                dropdown.add(option);
-            });
-        }
+                collections.forEach(collection => {
+                    const option = document.createElement('option');
+                    option.text = collection;
+                    option.value = collection;
+                    dropdown.add(option);
+                });
+            }
 
-        // Funzione per ottenere i documenti di una collezione selezionata
-        async function fetchDocuments() {
-            const collectionName = event.target.value; // Get the selected value from the event object
-            const response = await fetch(`/get_documents/${collectionName}`);
-            const documents = await response.json();
-            const dropdown_li = document.getElementById('documents-dropdown');
+            // Funzione per ottenere i documenti di una collezione selezionata
+            async function fetchDocuments() {
+                const collectionName = event.target.value; // Get the selected value from the event object
+                const response = await fetch(`/get_documents/${collectionName}`);
+                const documents = await response.json();
+                const dropdown_li = document.getElementById('documents-dropdown');
 
 
-            documents.forEach(collection => {
-                const option = document.createElement('option');
-                option.text = collection;
-                option.value = collection;
-                dropdown_li.add(option);
-            });
-
-        }
-
-        // Funzione per aggiungere una nuova collezione
-        async function addCollection() {
-            const collectionName = document.getElementById('new-collection-name').value;
-            const collectionId = document.getElementById('new-collection-id').value
-            const collectionData = document.getElementById('new-collection-json').value;
-
-            try {
-                const response = await fetch('/add_collection', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        name: collectionName,
-                        id: collectionId,
-                        data: JSON.parse(collectionData)
-                    })
+                documents.forEach(collection => {
+                    const option = document.createElement('option');
+                    option.text = collection;
+                    option.value = collection;
+                    dropdown_li.add(option);
                 });
 
-                if (response.ok) {
-                    alert('Collezione aggiunta con successo!');
-                    fetchCollections(); // Aggiorna la lista delle collezioni
-                } else {
-                    alert('Errore nell\'aggiunta della collezione.');
+            }
+
+            // Funzione per aggiungere una nuova collezione
+            async function addCollection() {
+                const collectionName = document.getElementById('new-collection-name').value;
+                const collectionId = document.getElementById('new-collection-id').value
+                const collectionData = document.getElementById('new-collection-json').value;
+
+                try {
+                    const response = await fetch('/add_collection', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            name: collectionName,
+                            id: collectionId,
+                            data: JSON.parse(collectionData)
+                        })
+                    });
+
+                    if (response.ok) {
+                        alert('Collezione aggiunta con successo!');
+                        fetchCollections(); // Aggiorna la lista delle collezioni
+                    } else {
+                        alert('Errore nell\'aggiunta della collezione.');
+                    }
+                } catch (error) {
+                    alert('Errore nel formato JSON.');
                 }
-            } catch (error) {
-                alert('Errore nel formato JSON.');
             }
-        }
 
-        // Funzione per caricare un file JSON e popolare la textarea
-        function handleFileUpload(event) {
-            const file = event.target.files[0];
-            const reader = new FileReader();
+            // Funzione per caricare un file JSON e popolare la textarea
+            function handleFileUpload(event) {
+                const file = event.target.files[0];
+                const reader = new FileReader();
 
-            reader.onload = function(event) {
-                const content = event.target.result;
-                document.getElementById('new-collection-json').value = content;
-            };
+                reader.onload = function(event) {
+                    const content = event.target.result;
+                    document.getElementById('new-collection-json').value = content;
+                };
 
-            reader.readAsText(file);
-        }
-
-        async function updateDocumentDataText() {
-            const collectionName = document.getElementById('collections-dropdown').value;
-            const documentId = document.getElementById('documents-dropdown').value;
-            console.log(collectionName+ "   " + documentId);
-            try {
-                const content = await fetch(`/${collectionName}/${documentId}`).json();
-                document.getElementById('update-collection-json').value = content;
-            }catch (error) {
-                alert('Errore nella caricazione del documento');
-
+                reader.readAsText(file);
             }
-        }
 
-        window.onload = fetchCollections;
-    </script>
-</head>
-<body>
-    <div class="left-panel">
+            async function updateDocumentDataText() {
+                const collectionName = document.getElementById('collections-dropdown').value;
+                const documentId = document.getElementById('documents-dropdown').value;
+                console.log(collectionName+ "   " + documentId);
+                try {
+                    const content = await fetch(`/${collectionName}/${documentId}`).json();
+                    document.getElementById('update-collection-json').value = content;
+                }catch (error) {
+                    alert('Errore nella caricazione del documento');
+
+                }
+            }
+
+            window.onload = fetchCollections;
+        </script>
+
+
+    <div>
         <h2>Modifica traettoria Larus</h2>
         <label for="collections-dropdown">Seleziona Larus:</label>
         <select id="collections-dropdown" onchange="fetchDocuments()">
@@ -154,7 +154,7 @@
 
 
     </div>
-    <div class="right-panel">
+    <div>
         <h2>Aggiungi Traettoria</h2>
         <label for="new-collection-name">Nome della nuova traettoria:</label>
         <input type="text" id="new-collection-name"><br><br>
@@ -164,11 +164,13 @@
         <textarea id="new-collection-json" placeholder='{"documento1": {"campo1": "valore1"}, "documento2": {"campo1": "valore2"}}'></textarea><br><br>
         <label for="file-upload">Carica un file JSON:</label>
         <input type="file" id="file-upload" accept=".json" onchange="handleFileUpload(event)"><br><br>
-        <button onclick="addCollection()">Aggiungi Traettoria</button>
+        <button onclick="addCollection()" class="button primary">Aggiungi Traettoria</button>
     </div>
         </section>
-    </section>
+     </section>
 </div>
+
+</body>
 
 <!-- Scripts -->
 <script src="assets/js/jquery.min.js"></script>
@@ -180,5 +182,5 @@
 <script src="assets/js/main.js"></script>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-</body>
+
 </html>
