@@ -17,7 +17,8 @@ app.config['SECRET_KEY'] = secret_key
 login = LoginManager(app)
 login.login_view = '/static/login.html'
 
-usersdb = { 'mess':'1234'}
+usersdb = { 'mess':'1234'
+            }
 
 db = '(default)'
 db = firestore.Client.from_service_account_json('credentials.json', database=db)
