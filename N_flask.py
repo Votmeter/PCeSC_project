@@ -1,11 +1,19 @@
 from flask import Flask, jsonify, send_from_directory, request, redirect, render_template
-from google.cloud import firestore
 import json
 
+import firebase_admin
+from firebase_admin import credentials
+from google.cloud import firestore
 
-db = 'tesinapcesc'
-db = firestore.Client.from_service_account_json("keys/nico_pk.json",
-                                                 database = db)
+# # Inizializza l'app Firebase
+# cred = credentials.Certificate('keys/nico_pk.json')
+# firebase_admin.initialize_app(cred)
+
+# # Connettiti a Firestore usando le stesse credenziali
+# db = firestore.Client(credentials=cred, project=cred.project_id)
+
+db = '(default)'
+db = firestore.Client.from_service_account_json('keys/nico_pk.json', database=db)
 
 # Funzione per verificare se una collezione esiste
 def collection_exists(collection_name):
@@ -30,7 +38,7 @@ def main():
 
 @app.route('/collections')
 def serve_html():
-    return send_from_directory('static', 'mockpage.html')
+    return send_from_directory('static', 'inserisci_dati.html')
 
 @app.route('/get_collections', methods=['GET'])
 def get_collections():
@@ -77,15 +85,31 @@ def add_collection():
             return 'Invalid data', 400
 
 
-    # collection_ref = db.collection(collection_name)
-    for iter in range(len(collection_id)):
-        coordinates =  documents.get('features')[0].get('geometry').get('coordinates')
+    last_doc_id = None
+    for doc in db.collection(collection_name).stream():
+        last_doc_id = int(doc.id)    
 
-        doc = {
-            str(index): coord for index, coord in enumerate(coordinates)
+    # Estrai le coordinate
+    coordinates = documents.get('features')[0].get('geometry').get('coordinates')
+
+    # Converti in lista di tuple (latitudine, longitudine)
+    locoords = [[coord[1], coord[0]] for coord in coordinates]
+
+        
+    # Loop through each document in the current collection
+    for coord in range(len(locoords)):
+        # Create a reference to the current document in Firestore
+        doc_ref = db.collection(collection_name).document(str(last_doc_id))
+        
+        # Prepare the data to be stored in Firestore
+        x = {
+            "lat": locoords[coord][0],
+            "long": locoords[coord][1]
         }
-
-        db.collection(collection_name).document(collection_id[iter]).set(doc)
+        
+        # Set the data in Firestore for the current document
+        doc_ref.set(x)
+        last_doc_id = last_doc_id + 1
 
     return 'Collection added', 200
 
