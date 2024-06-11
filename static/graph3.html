@@ -152,6 +152,7 @@
             clr = Math.floor(Math.random() * (10));
             scatterData = { type: 'scattermapbox', mode: 'markers', lat: latitudine, lon: longitudine, marker: { size: 7, color: colorlist[clr]}, text: x, name: 'Line' };
             lineData = { type: 'scattermapbox', mode: 'lines', lat: latitudine, lon: longitudine, line: { width: 4, color: colorlist1[clr]}, text: x, name: 'Line' };
+            try{
             switch(ref[x][0]){
                 case "control":
                     if(ref[x][1] == "translocated to Heligoland"){ Plotly.addTraces('mapid1', [lineData, scatterData]); }
@@ -166,6 +167,7 @@
                     if(ref[x][1] == "translocated to Kazan"){ Plotly.addTraces('mapid6', [lineData, scatterData]); }
                     break;
             }
+            }  catch(err){continue;};
             temp += 1;
         }
     }
