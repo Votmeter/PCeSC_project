@@ -63,12 +63,6 @@ def login():
         return redirect('/sensors')
     return redirect('/static/login.html')
 
-@app.route('/corridor_plot')
-def corridor_plot():
-    create_corridor_plot()
-
-    return render_template('corridoio_migratorio.html')  # Renderizza il template HTML
-
 @app.route('/logout')
 def logout():
     logout_user()
@@ -98,11 +92,13 @@ def multigraph(s):
     S=s.replace(" ","").split(",")
     print(S)
     D=[]
+    strn=" "
     for k in S:
         d2 = json.loads(get_data(k)[0])
         D.append(d2)
+        strn=strn+"  "+k
     print(D)
-    return render_template('multigraph5.html', data=D, s=S)
+    return render_template('multigraph5.html', data=D, s=strn)
 
 @app.route('/trajectory/<s>')
 def get_data(s):
@@ -148,6 +144,7 @@ def root_grafico():
 def getlist():
     l=[]
     for doc in db.collections():
+        if doc.id == "references": continue
         l.append(doc.id)
     l=json.dumps(l)
     return render_template('selezionagrafico5.html', l=l)
@@ -156,6 +153,7 @@ def getlist():
 def getlistanimated():
     l=[]
     for doc in db.collections():
+        if doc.id == "references": continue
         l.append(doc.id)
     l=json.dumps(l)
     return render_template('selezionagrafico5animato.html', l=l)
