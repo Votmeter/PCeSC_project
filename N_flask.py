@@ -1,11 +1,16 @@
 from flask import Flask, jsonify, send_from_directory, request, redirect, render_template
+
 from google.cloud import firestore
-import json
 
+# # Inizializza l'app Firebase
+# cred = credentials.Certificate('keys/nico_pk.json')
+# firebase_admin.initialize_app(cred)
 
-db = 'tesinapcesc'
-db = firestore.Client.from_service_account_json("keys/nico_pk.json",
-                                                 database = db)
+# # Connettiti a Firestore usando le stesse credenziali
+# db = firestore.Client(credentials=cred, project=cred.project_id)
+
+db = '(default)'
+db = firestore.Client.from_service_account_json('keys/nico_pk.json', database=db)
 
 # Funzione per verificare se una collezione esiste
 def collection_exists(collection_name):
@@ -67,36 +72,76 @@ def get_all_documents(coll):
 @app.route('/add_collection', methods=['POST'])
 def add_collection():
     data = request.json
-    collection_id = data.get('id').split(',')
+    # collection_id = data.get('id').split(',')
 
     collection_name = data.get('name')
     documents = data.get('data')
     
-    if not collection_name or not documents or len(documents.get('features')) !=  len(collection_id):
-        if document_exists(collection_name, id):
-            return 'Invalid data', 400
+    collection_ref = db.collection(collection_name)
+
+    # Recupera tutti i documenti nella collezione
+    docs = list(collection_ref.stream())
+
+    if not docs:
+        # Se la collezione è vuota
+        last_doc_id = 0
+    else:
+        # Se ci sono documenti, ordina per ID e prendi l'ultimo
+        docs_sorted = sorted(docs, key=lambda x: x.id)
+        last_doc_id = int(docs_sorted[-1].id)
+        # print(last_doc_id)
 
 
-    # collection_ref = db.collection(collection_name)
-    for iter in range(len(collection_id)):
-        coordinates =  documents.get('features')[0].get('geometry').get('coordinates')
-
-        doc = {
-            str(index): coord for index, coord in enumerate(coordinates)
+    # Estrai le coordinate
+    coordinates = documents.get('features')[0].get('geometry').get('coordinates')
+    # print(coordinates)
+    # Converti in lista di tuple (latitudine, longitudine)
+    locoords = [[coord[1], coord[0]] for coord in coordinates]
+        
+    # Loop through each document in the current collection
+    for coord in range(len(locoords)):
+        # Create a reference to the current document in Firestore
+        doc_ref = db.collection(collection_name).document(str(last_doc_id))
+        
+        # Prepare the data to be stored in Firestore
+        x = {
+            "lat": locoords[coord][0],
+            "long": locoords[coord][1]
         }
-
-        db.collection(collection_name).document(collection_id[iter]).set(doc)
+        
+        # Set the data in Firestore for the current document
+        doc_ref.set(x)
+        last_doc_id = last_doc_id + 1
 
     return 'Collection added', 200
 
-# Route to get documents for a specific collection
 @app.route('/<collection_name>/<document_id>', methods=['GET'])
 def single_document(collection_name, document_id):
-    # print(collection_name +'   '+ document_id)
+    # Ottieni il riferimento al documento
     doc_ref = db.collection(collection_name).document(document_id)
     doc = doc_ref.get()
-    print(json.dumps(doc, indent=4))
-    return jsonify(doc.to_dict())
+
+    # Verifica se il documento esiste
+    if doc.exists:
+        doc_dict = doc.to_dict()
+        return jsonify(doc_dict)
+    else:
+        return jsonify({"error": "Document not found"}), 404
+
+@app.route('/<collection_name>/<document_id>', methods=['POST'])
+def update_document(collection_name, document_id):
+    # Ottieni i dati JSON dalla richiesta
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+
+    # Ottieni il riferimento al documento
+    doc_ref = db.collection(collection_name).document(document_id)
+
+    # Aggiorna il documento
+    doc_ref.set(data, merge=True)
+
+    return jsonify({"success": True}), 200
 
     
 if __name__ == '__main__':

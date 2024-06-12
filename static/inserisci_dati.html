@@ -1,186 +1,207 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Tracciamento Animali Selvatici</title>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    />
     <link rel="stylesheet" href="assets/css/main.css" />
     <!-- Includi il CSS di Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-</head>
-<body class="landing is-preload">
-<div id="page-wrapper">
-    <!-- Header -->
+  </head>
+  <body class="landing is-preload">
+    <div id="page-wrapper">
+      <!-- Header -->
 
-    <header id="header" >
+      <header id="header">
         <h1><a href="index.html">Tracciamento Uccelli</a></h1>
         <nav id="nav">
-            <ul>
-                <li><a href="informazioni.html">Informazioni</a></li>
+          <ul>
+            <li><a href="informazioni.html">Informazioni</a></li>
+            <li>
+              <a href="#">Seleziona Traiettorie Migratorie</a>
+              <ul>
+                <li><a href="/graph3">Traiettorie Migratorie</a></li>
                 <li>
-                    <a href="#">Seleziona Traiettorie Migratorie</a>
-                    <ul>
-                        <li><a href="/graph3">Traiettorie Migratorie</a></li>
-                        <li><a href="/generate_corridor_plot">Corridoio Migratorio</a></li>
-                        <li><a href="/selgraph">Tracciamento Esemplari</a></li>
-                        <li><a href="/selgraphanimato">Tracciamento Animato</a></li>
-                        <li><a href="inserisci_dati.html">Modifica Traiettorie</a></li>
-                    </ul>
-
+                  <a href="/generate_corridor_plot">Corridoio Migratorio</a>
                 </li>
-                <li><a href="accedi.html" class="button">Login</a></li>
-            </ul>
+                <li><a href="/selgraph">Tracciamento Esemplari</a></li>
+                <li><a href="/selgraphanimato">Tracciamento Animato</a></li>
+                <li><a href="inserisci_dati.html">Modifica Traiettorie</a></li>
+              </ul>
+            </li>
+            <li><a href="accedi.html" class="button">Login</a></li>
+          </ul>
         </nav>
-    </header>
+      </header>
 
-
-
-
-    <!-- Banner -->
-    <section id="banner">
+      <!-- Banner -->
+      <section id="banner">
         <h2>Traiettorie</h2>
-    </section>
+      </section>
 
-    <!-- Main -->
-    <section id="main" class="container">
+      <!-- Main -->
+      <section id="main" class="container">
         <section class="box special">
-           <script>
+          <script>
             // Funzione per ottenere i nomi delle collezioni dal backend
             async function fetchCollections() {
-                const response = await fetch('/get_collections');
-                const collections = await response.json();
-                const dropdown = document.getElementById('collections-dropdown');
+              const response = await fetch("/get_collections");
+              const collections = await response.json();
+              const dropdown = document.getElementById("collections-dropdown");
 
-                collections.forEach(collection => {
-                    const option = document.createElement('option');
-                    option.text = collection;
-                    option.value = collection;
-                    dropdown.add(option);
-                });
+              collections.forEach((collection) => {
+                const option = document.createElement("option");
+                option.text = collection;
+                option.value = collection;
+                dropdown.add(option);
+              });
             }
 
             // Funzione per ottenere i documenti di una collezione selezionata
             async function fetchDocuments() {
-                const collectionName = event.target.value; // Get the selected value from the event object
-                const response = await fetch(`/get_documents/${collectionName}`);
-                const documents = await response.json();
-                const dropdown_li = document.getElementById('documents-dropdown');
+              const collectionName = event.target.value; // Get the selected value from the event object
+              const response = await fetch(`/get_documents/${collectionName}`);
+              const documents = await response.json();
+              const dropdown_li = document.getElementById("documents-dropdown");
 
-
-                documents.forEach(collection => {
-                    const option = document.createElement('option');
-                    option.text = collection;
-                    option.value = collection;
-                    dropdown_li.add(option);
-                });
-
+              documents.forEach((collection) => {
+                const option = document.createElement("option");
+                option.text = collection;
+                option.value = collection;
+                dropdown_li.add(option);
+              });
             }
 
             // Funzione per aggiungere una nuova collezione
             async function addCollection() {
-                const collectionName = document.getElementById('new-collection-name').value;
-                const collectionId = document.getElementById('new-collection-id').value
-                const collectionData = document.getElementById('new-collection-json').value;
+              const collectionName = document.getElementById(
+                "new-collection-name"
+              ).value;
+              const collectionId =
+                document.getElementById("new-collection-id").value;
+              const collectionData = document.getElementById(
+                "new-collection-json"
+              ).value;
 
-                try {
-                    const response = await fetch('/add_collection', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            name: collectionName,
-                            id: collectionId,
-                            data: JSON.parse(collectionData)
-                        })
-                    });
+              try {
+                const response = await fetch("/add_collection", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    name: collectionName,
+                    id: collectionId,
+                    data: JSON.parse(collectionData),
+                  }),
+                });
 
-                    if (response.ok) {
-                        alert('Collezione aggiunta con successo!');
-                        fetchCollections(); // Aggiorna la lista delle collezioni
-                    } else {
-                        alert('Errore nell\'aggiunta della collezione.');
-                    }
-                } catch (error) {
-                    alert('Errore nel formato JSON.');
+                if (response.ok) {
+                  alert("Collezione aggiunta con successo!");
+                  fetchCollections(); // Aggiorna la lista delle collezioni
+                } else {
+                  alert("Errore nell'aggiunta della collezione.");
                 }
+              } catch (error) {
+                alert("Errore nel formato JSON.");
+              }
             }
 
             // Funzione per caricare un file JSON e popolare la textarea
             function handleFileUpload(event) {
-                const file = event.target.files[0];
-                const reader = new FileReader();
+              const file = event.target.files[0];
+              const reader = new FileReader();
 
-                reader.onload = function(event) {
-                    const content = event.target.result;
-                    document.getElementById('new-collection-json').value = content;
-                };
+              reader.onload = function (event) {
+                const content = event.target.result;
+                document.getElementById("new-collection-json").value = content;
+              };
 
-                reader.readAsText(file);
+              reader.readAsText(file);
             }
 
             async function updateDocumentDataText() {
-                const collectionName = document.getElementById('collections-dropdown').value;
-                const documentId = document.getElementById('documents-dropdown').value;
-                console.log(collectionName+ "   " + documentId);
-                try {
-                    const content = await fetch(`/${collectionName}/${documentId}`).json();
-                    document.getElementById('update-collection-json').value = content;
-                }catch (error) {
-                    alert('Errore nella caricazione del documento');
-
-                }
+              const collectionName = document.getElementById(
+                "collections-dropdown"
+              ).value;
+              const documentId =
+                document.getElementById("documents-dropdown").value;
+              console.log(collectionName + "   " + documentId);
+              try {
+                const content = await fetch(
+                  `/${collectionName}/${documentId}`
+                ).json();
+                document.getElementById("update-collection-json").value =
+                  content;
+              } catch (error) {
+                alert("Errore nella caricazione del documento");
+              }
             }
 
             window.onload = fetchCollections;
-        </script>
+          </script>
 
-
-    <div>
-        <h2>Modifica traettoria Larus</h2>
-        <label for="collections-dropdown">Seleziona Larus:</label>
-        <select id="collections-dropdown" onchange="fetchDocuments()">
-            <option value="" disabled selected>Seleziona</option>
-        </select>
-        <br />
-        <label for="documents-dropdown">Seleziona traiettoria:</label>
-        <select id="documents-dropdown" onchange = updateDocumentDataText()>
-            <option value="" disabled selected>Seleziona</option>
-        </select>
-        <br />
-        <label for="update-collection-json">Collezione selezionata</label><br>
-        <textarea id="update-collection-json" placeholder='Nessuna collezione selezionata'></textarea><br><br>
-
-
-
-    </div>
-    <div>
-        <h2>Aggiungi Traettoria</h2>
-        <label for="new-collection-name">Nome della nuova traettoria:</label>
-        <input type="text" id="new-collection-name"><br><br>
-        <label for="new-collection-id">ID / IDs dei nuovi Documenti:</label>
-        <input type="text" id="new-collection-id"><br><br>
-        <label for="new-collection-json">Dati della traettoria:</label><br>
-        <textarea id="new-collection-json" placeholder='{"documento1": {"campo1": "valore1"}, "documento2": {"campo1": "valore2"}}'></textarea><br><br>
-        <label for="file-upload">Carica un file JSON:</label>
-        <input type="file" id="file-upload" accept=".json" onchange="handleFileUpload(event)"><br><br>
-        <button onclick="addCollection()" class="button primary">Aggiungi Traettoria</button>
-    </div>
+          <div>
+            <h2>Modifica traettoria Larus</h2>
+            <label for="collections-dropdown">Seleziona Larus:</label>
+            <select id="collections-dropdown" onchange="fetchDocuments()">
+              <option value="" disabled selected>Seleziona</option>
+            </select>
+            <br />
+            <label for="documents-dropdown">Seleziona traiettoria:</label>
+            <select id="documents-dropdown" onchange="updateDocumentDataText()">
+              <option value="" disabled selected>Seleziona</option>
+            </select>
+            <br />
+            <label for="update-collection-json">Collezione selezionata</label
+            ><br />
+            <textarea
+              id="update-collection-json"
+              placeholder="Nessuna collezione selezionata"
+            ></textarea
+            ><br /><br />
+          </div>
+          <div>
+            <h2>Aggiungi Traettoria</h2>
+            <label for="new-collection-name"
+              >Nome della nuova traettoria:</label
+            >
+            <input type="text" id="new-collection-name" /><br /><br />
+            <label for="new-collection-id">ID / IDs dei nuovi Documenti:</label>
+            <input type="text" id="new-collection-id" /><br /><br />
+            <label for="new-collection-json">Dati della traettoria:</label
+            ><br />
+            <textarea
+              id="new-collection-json"
+              placeholder='{"documento1": {"campo1": "valore1"}, "documento2": {"campo1": "valore2"}}'
+            ></textarea
+            ><br /><br />
+            <label for="file-upload">Carica un file JSON:</label>
+            <input
+              type="file"
+              id="file-upload"
+              accept=".json"
+              onchange="handleFileUpload(event)"
+            /><br /><br />
+            <button onclick="addCollection()" class="button primary">
+              Aggiungi Traettoria
+            </button>
+          </div>
         </section>
-     </section>
-</div>
+      </section>
+    </div>
+  </body>
 
-</body>
-
-<!-- Scripts -->
-<script src="assets/js/jquery.min.js"></script>
-<script src="assets/js/jquery.dropotron.min.js"></script>
-<script src="assets/js/jquery.scrollex.min.js"></script>
-<script src="assets/js/browser.min.js"></script>
-<script src="assets/js/breakpoints.min.js"></script>
-<script src="assets/js/util.js"></script>
-<script src="assets/js/main.js"></script>
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-
+  <!-- Scripts -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/jquery.dropotron.min.js"></script>
+  <script src="assets/js/jquery.scrollex.min.js"></script>
+  <script src="assets/js/browser.min.js"></script>
+  <script src="assets/js/breakpoints.min.js"></script>
+  <script src="assets/js/util.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </html>
