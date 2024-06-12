@@ -1,8 +1,5 @@
 from flask import Flask, jsonify, send_from_directory, request, redirect, render_template
-import json
 
-import firebase_admin
-from firebase_admin import credentials
 from google.cloud import firestore
 
 # # Inizializza l'app Firebase
@@ -38,7 +35,7 @@ def main():
 
 @app.route('/collections')
 def serve_html():
-    return send_from_directory('static', 'inserisci_dati.html')
+    return send_from_directory('static', 'mockpage.html')
 
 @app.route('/get_collections', methods=['GET'])
 def get_collections():
@@ -75,26 +72,31 @@ def get_all_documents(coll):
 @app.route('/add_collection', methods=['POST'])
 def add_collection():
     data = request.json
-    collection_id = data.get('id').split(',')
+    # collection_id = data.get('id').split(',')
 
     collection_name = data.get('name')
     documents = data.get('data')
     
-    if not collection_name or not documents or len(documents.get('features')) !=  len(collection_id):
-        if document_exists(collection_name, id):
-            return 'Invalid data', 400
+    collection_ref = db.collection(collection_name)
 
+    # Recupera tutti i documenti nella collezione
+    docs = list(collection_ref.stream())
 
-    last_doc_id = None
-    for doc in db.collection(collection_name).stream():
-        last_doc_id = int(doc.id)    
+    if not docs:
+        # Se la collezione è vuota
+        last_doc_id = 0
+    else:
+        # Se ci sono documenti, ordina per ID e prendi l'ultimo
+        docs_sorted = sorted(docs, key=lambda x: x.id)
+        last_doc_id = int(docs_sorted[-1].id)
+        # print(last_doc_id)
+
 
     # Estrai le coordinate
     coordinates = documents.get('features')[0].get('geometry').get('coordinates')
-
+    # print(coordinates)
     # Converti in lista di tuple (latitudine, longitudine)
     locoords = [[coord[1], coord[0]] for coord in coordinates]
-
         
     # Loop through each document in the current collection
     for coord in range(len(locoords)):

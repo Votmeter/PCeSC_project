@@ -92,7 +92,7 @@
         const collectionName = document.getElementById(
           "new-collection-name"
         ).value;
-        const collectionId = document.getElementById("new-collection-id").value;
+        // const collectionId = document.getElementById("new-collection-id").value;
         const collectionData = document.getElementById(
           "new-collection-json"
         ).value;
@@ -105,7 +105,6 @@
             },
             body: JSON.stringify({
               name: collectionName,
-              id: collectionId,
               data: JSON.parse(collectionData),
             }),
           });
@@ -282,8 +281,8 @@
       <h1>Aggiungi Collezione</h1>
       <label for="new-collection-name">Nome della nuova collezione:</label>
       <input type="text" id="new-collection-name" /><br /><br />
-      <label for="new-collection-id">ID / IDs dei nuovi Documenti:</label>
-      <input type="text" id="new-collection-id" /><br /><br />
+      <!-- <label for="new-collection-id">ID / IDs dei nuovi Documenti:</label>
+      <input type="text" id="new-collection-id" /><br /><br /> -->
       <label for="new-collection-json"
         >Dati della collezione (formato JSON):</label
       ><br />
