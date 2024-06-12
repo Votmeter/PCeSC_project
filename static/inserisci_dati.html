@@ -45,134 +45,82 @@
       <!-- Main -->
       <section id="main" class="container">
         <section class="box special">
-          <script>
-            // Funzione per ottenere i nomi delle collezioni dal backend
-            async function fetchCollections() {
-              const response = await fetch("/get_collections");
-              const collections = await response.json();
-              const dropdown = document.getElementById("collections-dropdown");
-
-              collections.forEach((collection) => {
-                const option = document.createElement("option");
-                option.text = collection;
-                option.value = collection;
-                dropdown.add(option);
-              });
-            }
-
-            // Funzione per ottenere i documenti di una collezione selezionata
-            async function fetchDocuments() {
-              const collectionName = event.target.value; // Get the selected value from the event object
-              const response = await fetch(`/get_documents/${collectionName}`);
-              const documents = await response.json();
-              const dropdown_li = document.getElementById("documents-dropdown");
-
-              documents.forEach((collection) => {
-                const option = document.createElement("option");
-                option.text = collection;
-                option.value = collection;
-                dropdown_li.add(option);
-              });
-            }
-
-            // Funzione per aggiungere una nuova collezione
-            async function addCollection() {
-              const collectionName = document.getElementById(
-                "new-collection-name"
-              ).value;
-              const collectionId =
-                document.getElementById("new-collection-id").value;
-              const collectionData = document.getElementById(
-                "new-collection-json"
-              ).value;
-
-              try {
-                const response = await fetch("/add_collection", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    name: collectionName,
-                    id: collectionId,
-                    data: JSON.parse(collectionData),
-                  }),
-                });
-
-                if (response.ok) {
-                  alert("Collezione aggiunta con successo!");
-                  fetchCollections(); // Aggiorna la lista delle collezioni
-                } else {
-                  alert("Errore nell'aggiunta della collezione.");
-                }
-              } catch (error) {
-                alert("Errore nel formato JSON.");
-              }
-            }
-
-            // Funzione per caricare un file JSON e popolare la textarea
-            function handleFileUpload(event) {
-              const file = event.target.files[0];
-              const reader = new FileReader();
-
-              reader.onload = function (event) {
-                const content = event.target.result;
-                document.getElementById("new-collection-json").value = content;
-              };
-
-              reader.readAsText(file);
-            }
-
-            async function updateDocumentDataText() {
-              const collectionName = document.getElementById(
-                "collections-dropdown"
-              ).value;
-              const documentId =
-                document.getElementById("documents-dropdown").value;
-              console.log(collectionName + "   " + documentId);
-              try {
-                const content = await fetch(
-                  `/${collectionName}/${documentId}`
-                ).json();
-                document.getElementById("update-collection-json").value =
-                  content;
-              } catch (error) {
-                alert("Errore nella caricazione del documento");
-              }
-            }
-
-            window.onload = fetchCollections;
-          </script>
-
-          <div>
-            <h2>Modifica traettoria Larus</h2>
-            <label for="collections-dropdown">Seleziona Larus:</label>
+          <div class="left-panel">
+            <h1>Firestore Collections</h1>
+            <label for="collections-dropdown">Select a Collection:</label>
             <select id="collections-dropdown" onchange="fetchDocuments()">
-              <option value="" disabled selected>Seleziona</option>
+              <option value="" disabled selected>Select a collection</option>
             </select>
             <br />
-            <label for="documents-dropdown">Seleziona traiettoria:</label>
+            <label for="documents-dropdown">Select a Document:</label>
             <select id="documents-dropdown" onchange="updateDocumentDataText()">
-              <option value="" disabled selected>Seleziona</option>
+              <option value="" disabled selected>Select a document</option>
             </select>
             <br />
-            <label for="update-collection-json">Collezione selezionata</label
-            ><br />
-            <textarea
-              id="update-collection-json"
-              placeholder="Nessuna collezione selezionata"
-            ></textarea
-            ><br /><br />
+
+            <div
+              class="modal fade"
+              id="documentModal"
+              tabindex="-1"
+              role="dialog"
+              aria-labelledby="documentModalLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="documentModalLabel">
+                      Modifica Documento
+                    </h5>
+                    <button
+                      type="button"
+                      class="close"
+                      data-dismiss="modal"
+                      aria-label="Close"
+                    >
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <label for="update-collection-json"
+                      >Contenuto del Documento:</label
+                    ><br />
+                    <textarea
+                      id="update-collection-json"
+                      style="width: 100%; height: 300px"
+                      placeholder="Nessun documento selezionato"
+                    ></textarea>
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-dismiss="modal"
+                    >
+                      Chiudi
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      onclick="updateCollection()"
+                    >
+                      Salva Modifiche
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div>
-            <h2>Aggiungi Traettoria</h2>
+          <div class="right-panel">
+            <h1>Aggiungi Collezione</h1>
             <label for="new-collection-name"
-              >Nome della nuova traettoria:</label
+              >Nome della nuova collezione:</label
             >
             <input type="text" id="new-collection-name" /><br /><br />
-            <label for="new-collection-id">ID / IDs dei nuovi Documenti:</label>
-            <input type="text" id="new-collection-id" /><br /><br />
-            <label for="new-collection-json">Dati della traettoria:</label
+            <!-- <label for="new-collection-id">ID / IDs dei nuovi Documenti:</label>
+            <input type="text" id="new-collection-id" /><br /><br /> -->
+            <label for="new-collection-json"
+              >Dati della collezione (formato JSON):</label
             ><br />
             <textarea
               id="new-collection-json"
@@ -186,9 +134,7 @@
               accept=".json"
               onchange="handleFileUpload(event)"
             /><br /><br />
-            <button onclick="addCollection()" class="button primary">
-              Aggiungi Traettoria
-            </button>
+            <button onclick="addCollection()">Aggiungi Collezione</button>
           </div>
         </section>
       </section>
@@ -196,6 +142,181 @@
   </body>
 
   <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+  <script>
+    // Funzione per ottenere i nomi delle collezioni dal backend
+    async function fetchCollections() {
+      const response = await fetch("/get_collections");
+      const collections = await response.json();
+      const dropdown = document.getElementById("collections-dropdown");
+
+      collections.forEach((collection) => {
+        const option = document.createElement("option");
+        option.text = collection;
+        option.value = collection;
+        dropdown.add(option);
+      });
+    }
+
+    async function fetchDocuments() {
+      const collectionName = event.target.value; // Get the selected value from the event object
+      const response = await fetch(`/get_documents/${collectionName}`);
+      const documents = await response.json();
+      const dropdown_li = document.getElementById("documents-dropdown");
+
+      // // Svuota l'elemento dropdown prima di aggiungere i nuovi elementi
+      // dropdown.innerHTML = '';
+      documents.forEach((collection) => {
+        const option = document.createElement("option");
+        option.text = collection;
+        option.value = collection;
+        dropdown_li.add(option);
+      });
+    }
+
+    //   async function fetchDocuments() {
+    //     const collectionName = event.target.value; // Get the selected value from the event object
+    //     const response = await fetch(`/get_documents/${collectionName}`);
+    //     const documents = await response.json();
+    //     const dropdown_li = document.getElementById("documents-dropdown");
+
+    //     // // Svuota l'elemento dropdown prima di aggiungere i nuovi elementi
+    //     dropdown_li.innerHTML =
+    //       '<option value="" disabled selected>Select a document</option>';
+
+    //     documents.forEach((document) => {
+    //       const option = document.createElement("option");
+    //       option.text = document;
+    //       option.value = document;
+    //       dropdown_li.add(option);
+    //     });
+    //   }
+
+    // Funzione per aggiungere una nuova collezione
+    async function addCollection() {
+      const collectionName = document.getElementById(
+        "new-collection-name"
+      ).value;
+      // const collectionId = document.getElementById("new-collection-id").value;
+      const collectionData = document.getElementById(
+        "new-collection-json"
+      ).value;
+
+      try {
+        const response = await fetch("/add_collection", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: collectionName,
+            data: JSON.parse(collectionData),
+          }),
+        });
+
+        if (response.ok) {
+          alert("Collezione aggiunta con successo!");
+          fetchCollections(); // Aggiorna la lista delle collezioni
+        } else {
+          alert("Errore nell'aggiunta della collezione.");
+        }
+      } catch (error) {
+        alert("Errore nel formato JSON.");
+      }
+    }
+
+    // Funzione per caricare un file JSON e popolare la textarea
+    function handleFileUpload(event) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function (event) {
+        const content = event.target.result;
+        document.getElementById("new-collection-json").value = content;
+      };
+
+      reader.readAsText(file);
+    }
+
+    // async function updateDocumentDataText() {
+    //     const collectionName = document.getElementById('collections-dropdown').value;
+    //     const documentId = document.getElementById('documents-dropdown').value;
+    //     console.log(collectionName + "   " + documentId);
+    //     try {
+    //         const response = await fetch(`/${collectionName}/${documentId}`);
+    //         if (!response.ok) {
+    //             throw new Error('Errore nella caricazione del documento');
+    //         }
+    //         const content = await response.json();
+    //         document.getElementById('update-collection-json').value = JSON.stringify(content, null, 4);
+    //     } catch (error) {
+    //         alert('Errore nella caricazione del documento');
+    //         console.error(error);
+    //     }
+    // }
+
+    async function updateDocumentDataText() {
+      const collectionName = document.getElementById(
+        "collections-dropdown"
+      ).value;
+      const documentId = document.getElementById("documents-dropdown").value;
+
+      try {
+        const response = await fetch(`/${collectionName}/${documentId}`);
+        if (!response.ok) {
+          throw new Error("Errore nella caricazione del documento");
+        }
+        const content = await response.json();
+        document.getElementById("update-collection-json").value =
+          JSON.stringify(content, null, 4);
+
+        // Mostra il modale
+        $("#documentModal").modal("show");
+      } catch (error) {
+        alert("Errore nella caricazione del documento");
+        console.error(error);
+      }
+    }
+
+    async function updateCollection() {
+      const collectionName = document.getElementById(
+        "collections-dropdown"
+      ).value;
+      const documentId = document.getElementById("documents-dropdown").value;
+      const updatedContent = document.getElementById(
+        "update-collection-json"
+      ).value;
+
+      try {
+        const response = await fetch(`/${collectionName}/${documentId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: updatedContent,
+        });
+
+        if (!response.ok) {
+          throw new Error("Errore nell'aggiornamento del documento");
+        }
+
+        const result = await response.json();
+        if (result.success) {
+          alert("Documento aggiornato con successo");
+        } else {
+          alert("Errore nell'aggiornamento del documento");
+        }
+      } catch (error) {
+        alert("Errore nell'aggiornamento del documento");
+        console.error(error);
+      }
+    }
+
+    window.onload = fetchCollections;
+  </script>
   <script src="assets/js/jquery.min.js"></script>
   <script src="assets/js/jquery.dropotron.min.js"></script>
   <script src="assets/js/jquery.scrollex.min.js"></script>
