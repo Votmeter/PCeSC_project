@@ -4,23 +4,24 @@
 		<title> Tracciamento Larus </title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
+		<link rel="stylesheet" href="/static/assets/css/main.css" />
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"/>
+		<noscript><link rel="stylesheet" href="assets/css/main.css" /></noscript>
 	</head>
 	<body class="landing is-preload">
 		<div id="page-wrapper">
 
 			<!-- Header -->
 
-
 				<header id="header" class="alt">
-					<h1><a href="index.html"> Tracciamento Larus</a></h1>
+					<h1><a href="/"> Tracciamento Larus</a></h1>
 					<nav id="nav">
 						<ul>
 							<li>
 
 									<li><a href="informazioni.html">Informazioni</a></li>
 									<li>
-										<a href="#">Seleziona Traiettorie Migratorie</a>
+										<a href="#">Menù principale</a>
 										<ul>
 											<li><a href="/graph3">Traiettorie Migratorie</a></li>
 											<li><a href="/generate_corridor_plot">Corridoio Migratorio</a></li>
@@ -28,9 +29,9 @@
 											<li><a href="/selgraphanimato">Tracciamento Animato</a></li>
 											<li><a href="inserisci_dati.html">Modifica Traiettorie</a></li>
 										</ul>
-
 									</li>
-							<li><a href="accedi.html" class="button">Login</a></li>
+							<li><a href="/accedi" class="button">Login</a></li>
+							<li><a href="/logout" class="button">Logout</a></li>
 							</li>
 						</ul>
 					</nav>
