@@ -29,7 +29,7 @@ class User(UserMixin):
 app = Flask(__name__, template_folder="static")
 app.config['SECRET_KEY'] = secret_key
 login = LoginManager(app)
-login.login_view = '/static/login.html'
+login.login_view = '/static/accedi.html'
 
 usersdb = { 'mess':'1234' }
 
@@ -37,7 +37,7 @@ db = '(default)'
 db = firestore.Client.from_service_account_json('credentials.json', database=db)
 
 @app.route('/')
-def root():
+def main():
     return redirect('/static/index.html')
 @app.route('/sequence/<s>', methods=["GET", "POST"])
 def proposeswap_db_function(s):
@@ -52,27 +52,33 @@ def load_user(username):
         return User(username)
     return None
 
+@app.route('/accedi', methods=['GET'])
+def accedi():
+    if current_user.is_authenticated:
+        return redirect('/')
+    return redirect('/static/accedi.html')
+
 @app.route('/login', methods=['POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('/sensors'))
+        return redirect('/')
     username = request.values['u']
     password = request.values['p']
+    next_page = request.values['next']
     if username in usersdb and password == usersdb[username]:
         login_user(User(username))
-        return redirect('/sensors')
-    return redirect('/static/login.html')
+        if not next_page:
+            next_page = '/'
+        return redirect(next_page)
+    return render_template('accedi.html')
 
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect('/')
 
-@app.route('/')
-def main():
-    return render_template('graph5base.html')
-
 @app.route('/graph5/<s>')
+@login_required
 def graph2(s):
     print('ciao2')
     d2 = json.loads(get_data(s)[0])

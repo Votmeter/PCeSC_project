@@ -1,18 +1,19 @@
 <!DOCTYPE HTML>
-
 <html>
 	<head>
-		<title>Iscrizione </title>
+		<title>Login </title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
+		<link rel="stylesheet" href="/static/assets/css/main.css" />
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"/>
+		<noscript><link rel="stylesheet" href="assets/css/main.css" /></noscript>
 	</head>
-	<body class="is-preload">
+	<body class="landing is-preload">
 		<div id="page-wrapper">
-			<!-- Header -->
 
 			<!-- Header -->
-				<header id="header" >
+
+				<header id="header" class="alt">
 					<h1><a href="/"> Tracciamento Larus  </a></h1>
 					<nav id="nav">
 						<ul>
@@ -20,22 +21,28 @@
 
 									<li><a href="informazioni.html">Informazioni</a></li>
 									<li>
-										<a href="#">Tracciamento Uccelli</a>
+										<a href="#">Menù principale</a>
 										<ul>
-											<li><a href="traiettorie.html">Traiettorie</a></li>
-											<li><a href="corridoio_migratorio.html">Corridoio Migratorio</a></li>
-											<li><a href="traiettorie_traslocate.html">Trettorie Traslocate</a></li>
-											<li><a href="#">Inserisci dati</a></li>
+											<li><a href="/graph3">Traiettorie Migratorie</a></li>
+											<li><a href="/generate_corridor_plot">Corridoio Migratorio</a></li>
+											<li><a href="/selgraph">Tracciamento Esemplari</a></li>
+											<li><a href="/selgraphanimato">Tracciamento Animato</a></li>
+											<li><a href="inserisci_dati.html">Modifica Traiettorie</a></li>
 										</ul>
 									</li>
-							<li><a href="accedi.html" class="button">Login</a></li>
+							<li><a href="/accedi" class="button">Login</a></li>
+							<li><a href="/logout" class="button">Logout</a></li>
 							</li>
 						</ul>
 					</nav>
 				</header>
 
+				<section id="banner">
+
+				</section>
+
 			<!-- Main -->
-				<section id="main" class="container medium">
+				<section id="main" class="container small">
 
 					<header>
 						<h2> <b> Login</b> </h2>
@@ -43,15 +50,18 @@
 					</header>
 
 					<div class="box">
-						<form method="post" action="#">
 							<div class="row gtr-50 gtr-uniform">
 
 								<form action="/login" method="post">
-								email <input type="text" name="u"><br>
+								username <input type="text" name="u"><br>
 								password <input type="password" name="p"><br>
 								<input type="hidden" id="next" name="next">
 								<!-- inserisco un pezzo di javascript che dicono: prendi il campo next dall'URL della pagina login imposto la casella index-->
-
+								<div class="col-12">
+								<ul class="actions special">
+									<li><input type="submit" value="Accedi" href="/login"/></li>
+								</ul>
+								</div>
 								</form>
 								<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 								<script type="text/javascript">
@@ -60,24 +70,12 @@
 									$("#next").val(next)
 								</script>
 
-
-							<div class="col-12">
-								<ul class="actions special">
-									<li><input type="submit" value="Accedi" /></li>
-								</ul>
-								</div>
-								<p> Non sei iscritto? </p>
-								<ul class="actions special">
-										<li><a href="iscrizione.html" class="button">Iscriviti</a></li>
-								</ul>
 							</div>
-						</form>
 					</div>
 				</section>
 
 
 		</div>
-
 		<!-- Scripts -->
 			<script src="assets/js/jquery.min.js"></script>
 			<script src="assets/js/jquery.dropotron.min.js"></script>
@@ -86,6 +84,5 @@
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
-
 	</body>
 </html>
