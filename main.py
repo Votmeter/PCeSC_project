@@ -1,7 +1,7 @@
 import pandas as pd
 from flask import Flask,request,jsonify, redirect,url_for,render_template
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required, UserMixin
-from secret import secret_key
+from secret import secret_key,gmaps_key
 from google.cloud import firestore
 import json
 
@@ -44,7 +44,7 @@ def proposeswap_db_function(s):
     d2 = json.loads(get_data(s)[0])
     k = int(request.form["jsvar"])+1
     print(k)
-    return render_template('graph5animated.html', data=d2[:k], s=s, k=k)
+    return render_template('graph5animated.html', data=d2[:k], s=s, k=k, gmk=gmaps_key)
 
 @login.user_loader
 def load_user(username):
@@ -77,14 +77,14 @@ def graph2(s):
     print('ciao2')
     d2 = json.loads(get_data(s)[0])
     print(d2)
-    return render_template('graph5base.html', data=d2)
+    return render_template('graph5base.html', data=d2, gmk=gmaps_key)
 
 @app.route('/graph5animated/<s>')
 def graph5animated(s):
     print('ciao5')
     S = s.replace(" ", "").split(",")
     d2 = json.loads(get_data(S[0])[0])
-    return render_template('graph5animated.html', data=d2[:2],s=S[0], k=2)
+    return render_template('graph5animated.html', data=d2[:2],s=S[0], k=2, gmk=gmaps_key)
 
 @app.route('/multigraph5/<s>')
 def multigraph(s):
@@ -98,7 +98,7 @@ def multigraph(s):
         D.append(d2)
         strn=strn+"  "+k
     print(D)
-    return render_template('multigraph5.html', data=D, s=strn)
+    return render_template('multigraph5.html', data=D, s=strn, gmk=gmaps_key)
 
 @app.route('/trajectory/<s>')
 def get_data(s):

@@ -60,7 +60,7 @@
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript" >
 
-google.charts.load('current', {'packages': ['map','corechart', 'line'], 'mapsApiKey': 'AIzaSyBIo_qwcuNigphu771JIVFZCrfKarnbhdU'});
+google.charts.load('current', {'packages': ['map','corechart', 'line'], 'mapsApiKey': '{{gmk}}'});
 google.charts.setOnLoadCallback(myMap);
 const data={{data}};
 
@@ -113,7 +113,7 @@ function sequenza()
   <input type="hidden" name="jsvar" id="jsvar" value={{k}} />
   <button type="submit" href="#googleMap" ></button>
 </form>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBIo_qwcuNigphu771JIVFZCrfKarnbhdU&callback=myMap"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{gmk}}&callback=myMap"></script>
 						</div>
 					</section>
 				</section>
