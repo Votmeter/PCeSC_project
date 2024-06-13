@@ -39,6 +39,7 @@ db = firestore.Client.from_service_account_json('credentials.json', database=db)
 @app.route('/')
 def root():
     return redirect('/static/index.html')
+
 @app.route('/sequence/<s>', methods=["GET", "POST"])
 def proposeswap_db_function(s):
     d2 = json.loads(get_data(s)[0])
@@ -201,14 +202,14 @@ def get_documents(collection_name):
     documents = {doc.id: doc.to_dict() for doc in docs}
     return jsonify(documents)
 
-@app.route('/collections/<coll>', methods=['GET'])
-def get_all_documents(coll):
-    collection_ref = db.collection(coll)
-    docs = collection_ref.stream()
-    documents = {}
-    for doc in docs:
-        documents[doc.id] = doc.to_dict()
-    return documents
+# @app.route('/collections/<coll>', methods=['GET'])
+# def get_all_documents(coll):
+#     collection_ref = db.collection(coll)
+#     docs = collection_ref.stream()
+#     documents = {}
+#     for doc in docs:
+#         documents[doc.id] = doc.to_dict()
+#     return documents
 
 
 # Endpoint per aggiungere una nuova collezione
