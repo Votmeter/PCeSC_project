@@ -8,59 +8,49 @@
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
   </head>
-	<body class="landing is-preload">
-		<div id="page-wrapper">
-			<!-- Header -->
-				<header id="header" >
-					<h1><a href="/"> Tracciamento Uccelli</a></h1>
-					<nav id="nav">
-						<ul>
-							<li>
-									<li><a href="informazioni.html">Informazioni</a></li>
-									<li>
-										<a href="#">Seleziona Traiettorie Migratorie</a>
-										<ul>
-											<li><a href="/graph3">Traiettorie Migratorie</a></li>
-											<li><a href="/generate_corridor_plot">Corridoio Migratorio</a></li>
-											<li><a href="/selgraph">Tracciamento Esemplari</a></li>
-											<li><a href="/selgraphanimato">Tracciamento Animato</a></li>
-											<li><a href="inserisci_dati.html">Modifica Traiettorie</a></li>
-										</ul>
-									</li>
-								</li>
-							<li><a href="accedi.html" class="button">Login</a></li>
-						</ul>
-					</nav>
-				</header>
+  <body class="landing is-preload">
+    <div id="page-wrapper">
+      <!-- Header -->
+      <header id="header">
+        <h1><a href="/">Tracciamento Uccelli</a></h1>
+        <nav id="nav">
+          <ul>
+            <li><a href="informazioni.html">Informazioni</a></li>
+            <li>
+              <a href="#">Seleziona Traiettorie Migratorie</a>
+              <ul>
+                <li><a href="/graph3">Traiettorie Migratorie</a></li>
+                <li>
+                  <a href="/generate_corridor_plot">Corridoio Migratorio</a>
+                </li>
+                <li><a href="/selgraph">Tracciamento Esemplari</a></li>
+                <li><a href="/selgraphanimato">Tracciamento Animato</a></li>
+                <li><a href="inserisci_dati.html">Modifica Traiettorie</a></li>
+              </ul>
+            </li>
+            <li><a href="accedi.html" class="button">Login</a></li>
+          </ul>
+        </nav>
+      </header>
 
-			<!-- Banner -->
-				<section id="banner">
-					<h2> Grafico Cinque statico </h2>
-						</ul>
-				</section>
-			<!-- Main -->
-				<section id="main" class="container">
-					<section class="box special">
-						<header class="major">
-							<h2><br> Visualizzazione delle traiettorie {{s}} <br />
-							</h2>
-							<p></p>
-						</header>
-						<div class="chart" id="scatter_mapbox", style="height: 500px;">
-							<div id="googleMap" style="width:100%;height:400px;"></div>
+      <!-- Main -->
+      <section id="main" class="container">
+        <section class="box special">
+          <header class="major">
+            <h2>Visualizzazione del Corridoio Migratorio</h2>
+          </header>
+          <div id="corridorPlot"></div>
+        </section>
+      </section>
+    </div>
 
-						</div>
-					</section>
-				</section>
-		</div>
-
-		<script src="/static/assets/js/jquery.min.js"></script>
-		<script src="/static/assets/js/jquery.scrolly.min.js"></script>
-		<script src="/static/assets/js/jquery.scrollex.min.js"></script>
-		<script src="/static/assets/js/browser.min.js"></script>
-		<script src="/static/assets/js/breakpoints.min.js"></script>
-		<script src="/static/assets/js/util.js"></script>
-		<script src="/static/assets/js/main.js"></script>
+    <script src="/static/assets/js/jquery.min.js"></script>
+    <script src="/static/assets/js/jquery.scrolly.min.js"></script>
+    <script src="/static/assets/js/jquery.scrollex.min.js"></script>
+    <script src="/static/assets/js/browser.min.js"></script>
+    <script src="/static/assets/js/breakpoints.min.js"></script>
+    <script src="/static/assets/js/util.js"></script>
+    <script src="/static/assets/js/main.js"></script>
 
 		<script type="text/javascript" >
 
