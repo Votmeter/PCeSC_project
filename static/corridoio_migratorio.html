@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Corridorio Migratorio</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+    <link rel="stylesheet" href="/static/assets/css/main.css" />
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+  </head>
+  <body class="landing is-preload">
+    <div id="page-wrapper">
+      <!-- Header -->
+      <header id="header">
+        <h1><a href="/">Tracciamento Uccelli</a></h1>
+        <nav id="nav">
+          <ul>
+            <li><a href="informazioni.html">Informazioni</a></li>
+            <li>
+              <a href="#">Seleziona Traiettorie Migratorie</a>
+              <ul>
+                <li><a href="/graph3">Traiettorie Migratorie</a></li>
+                <li>
+                  <a href="/generate_corridor_plot">Corridoio Migratorio</a>
+                </li>
+                <li><a href="/selgraph">Tracciamento Esemplari</a></li>
+                <li><a href="/selgraphanimato">Tracciamento Animato</a></li>
+                <li><a href="inserisci_dati.html">Modifica Traiettorie</a></li>
+              </ul>
+            </li>
+            <li><a href="accedi.html" class="button">Login</a></li>
+          </ul>
+        </nav>
+      </header>
+
+      <!-- Main -->
+      <section id="main" class="container">
+        <section class="box special">
+          <header class="major">
+            <h2>Visualizzazione del Corridoio Migratorio</h2>
+          </header>
+          <div id="corridorPlot"></div>
+        </section>
+      </section>
+    </div>
+
+    <script src="/static/assets/js/jquery.min.js"></script>
+    <script src="/static/assets/js/jquery.scrolly.min.js"></script>
+    <script src="/static/assets/js/jquery.scrollex.min.js"></script>
+    <script src="/static/assets/js/browser.min.js"></script>
+    <script src="/static/assets/js/breakpoints.min.js"></script>
+    <script src="/static/assets/js/util.js"></script>
+    <script src="/static/assets/js/main.js"></script>
+
+    <script type="text/javascript">
+      document.addEventListener('DOMContentLoaded', function() {
+          function getStandardDeviation (array) {
+                if (!array || array.length === 0) {return 0;}
+                const n = array.length
+                const mean = array.reduce((a, b) => a + b) / n
+                return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n)
+          }
+          // Funzione per calcolare la distanza utilizzando la formula dell'haversine
+          function haversine(lat1, lon1, lat2, lon2) {
+              const R = 6371; // Raggio della Terra in km
+              const dLat = (lat2 - lat1) * Math.PI / 180;
+              const dLon = (lon2 - lon1) * Math.PI / 180;
+              const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+              const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+              return R * c;
+          }
+          // Funzione per creare il grafico del corridoio migratorio
+          async function createCorridorPlot() {
+              // Calcola la mediana delle Longitudini
+              const data = JSON.parse({{ data | tojson }});
+              const ref = JSON.parse({{ ref | tojson }});
+              console.log(data);
+              const longitudes = [];
+              for( x in data){
+                  //console.log(x)
+                  for(y in data[x]){
+                      //console.log(y)
+                      longitudes.push(data[x][y][1]);
+                  }
+              };
+              console.log(longitudes)
+              const longTrajectoryMedian = d3.median(longitudes);
+              console.log("La mediana per le Longitudini è:", longTrajectoryMedian);
+
+              // Calcola la distanza tra ciascun punto e la longitudine media, tenendo conto del segno
+              Distance_to_mean={}
+              latitude=[]
+              Groups=[{},{},{},{},{},{}]
+              for(const i of Array(30).keys()){Groups[0][i+29]=[];Groups[1][i+29]=[];Groups[2][i+29]=[];Groups[3][i+29]=[];Groups[4][i+29]=[];Groups[5][i+29]=[]}
+              console.log(latitude)
+              for(x in data){
+                  console.log(x)
+                  for(y in data[x]){
+                        //Distance_to_mean = haversine(data[x][y][0], data[x][y][1], data[x][y][0], longTrajectoryMedian) ;
+                        Distance_to_mean = (data[x][y][1] - longTrajectoryMedian)*100
+                        //console.log(y)
+                        try{
+                        switch(ref[x][0]){
+                              case "control":
+                                  if(ref[x][1] == "translocated to Heligoland"){for(const i of Array(30).keys()){if(data[x][y][0]<i+29 && data[x][y][0]>i+29-1){Groups[0][i+29].push(Distance_to_mean)}}}
+                                  if(ref[x][1] == "translocated to Kazan"){for(const i of Array(30).keys()){if(data[x][y][0]<i+29 && data[x][y][0]>i+29-1){Groups[1][i+29].push(Distance_to_mean)}}}
+                                  break;
+                              case "OLFAC":
+                                  if(ref[x][1] == "translocated to Heligoland"){for(const i of Array(30).keys()){if(data[x][y][0]<i+29 &&data[x][y][0]>i+29-1){Groups[2][i+29].push(Distance_to_mean)}}}
+                                  if(ref[x][1] == "translocated to Kazan"){for(const i of Array(30).keys()){if(data[x][y][0]<i+29 &&data[x][y][0]>i+29-1){Groups[3][i+29].push(Distance_to_mean)}}}
+                                  break;
+                              case "TRIGEM":
+                                  if(ref[x][1] == "translocated to Heligoland"){for(const i of Array(30).keys()){if(data[x][y][0]<i+29 &&data[x][y][0]>i+29-1){Groups[4][i+29].push(Distance_to_mean)}}}
+                                  if(ref[x][1] == "translocated to Kazan"){for(const i of Array(30).keys()){if(data[x][y][0]<i+29 &&data[x][y][0]>i+29-1){Groups[5][i+29].push(Distance_to_mean)}}}
+                                  break;
+                        }
+                        }  catch(err){continue;};
+                  }
+              }
+              console.log(Groups[0])
+              // Raggruppa i dati per 'Origine', 'Tipologia di uccello', e 'Latitudine' e calcola le distanze medie
+              let curves=[{"lat":[],"mean":[],"std":[]},{"lat":[],"mean":[],"std":[]},{"lat":[],"mean":[],"std":[]},{"lat":[],"mean":[],"std":[]},{"lat":[],"mean":[],"std":[]},{"lat":[],"mean":[],"std":[]}]
+              for(x in Groups[0]){
+                  for(k in curves){
+                      const average = Groups[k][x].reduce((a, b) => a + b,0) / Groups[k][x].length;
+                      curves[k]["lat"].push(x);
+                      curves[k]["mean"].push(average);
+                      curves[k]["std"].push(getStandardDeviation(Groups[k][x]));
+                  }
+              }
+              console.log(curves[0]);
+
+              // Creazione del grafico
+              const corridorPlot = document.getElementById('corridorPlot');
+              const layout = {
+                  title: 'Distanze Medie degli Uccelli Traslocati dal Corridoio Migratorio',
+                  xaxis: { title: 'Distanza dal corridoio migratorio (km)' },
+                  yaxis: { title: 'Latitudine' },
+                  legend: { x: 1, y: 1 },
+                  widht:400,
+                  height:800,
+              };
+              const traces = [];
+              const colorMap = {
+                  0: 'blue',
+                  1: 'blue',
+                  2: 'red',
+                  3: 'red',
+                  4: 'green',
+                  5: 'green',
+              };
+              const indices = [
+              { x: 0, name: 'Heligoland - control' },
+              { x: 2, name: 'Heligoland - OLFAC' },
+              { x: 4, name: 'Heligoland - TRIGEM' },
+              { x: 1, name: 'Kazan - control' },
+              { x: 3, name: 'Kazan - OLFAC' },
+              { x: 5, name: 'Kazan - TRIGEM' }
+              ];
+              for(x in curves){
+                  const trace = {
+                      x: curves[x]["mean"],
+                      y: curves[x]["lat"],
+                      error_x: {
+                          type: 'data',
+                          array: curves[x]["std"],
+                          visible: true
+                      },
+                      type: 'scatter',
+                      mode: 'lines+markers',
+                      marker: { color: colorMap[x] },
+                      name: indices[x].name  // Assegna il nome agli indici
+                  };
+                  traces.push(trace);
+              };
+
+              Plotly.newPlot(corridorPlot, traces, layout);
+
+          };
+          // Dati ricevuti dal server
+          var dataFromServer = {{ data | tojson }};
+          createCorridorPlot(dataFromServer);
+      });
+    </script>
+  </body>
+</html>

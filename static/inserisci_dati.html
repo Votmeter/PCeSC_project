@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tracciamento Animali Selvatici</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <!-- Includi il CSS di Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  </head>
+  <body class="landing is-preload">
+    <div id="page-wrapper">
+      <!-- Header -->
+
+      <header id="header">
+        <h1><a href="index.html">Tracciamento Uccelli</a></h1>
+        <nav id="nav">
+          <ul>
+            <li><a href="informazioni.html">Informazioni</a></li>
+            <li>
+              <a href="#">Seleziona Traiettorie Migratorie</a>
+              <ul>
+                <li><a href="/graph3">Traiettorie Migratorie</a></li>
+                <li>
+                  <a href="/generate_corridor_plot">Corridoio Migratorio</a>
+                </li>
+                <li><a href="/selgraph">Tracciamento Esemplari</a></li>
+                <li><a href="/selgraphanimato">Tracciamento Animato</a></li>
+                <li><a href="inserisci_dati.html">Modifica Traiettorie</a></li>
+              </ul>
+            </li>
+            <li><a href="accedi.html" class="button">Login</a></li>
+          </ul>
+        </nav>
+      </header>
+
+      <!-- Banner -->
+      <section id="banner">
+        <h2>Traiettorie</h2>
+      </section>
+
+      <!-- Main -->
+      <section id="main" class="container">
+        <section class="box special">
+          <h2>Modifica Traiettoria</h2>
+          <select id="collections-dropdown" onchange="fetchDocuments()">
+            <option value="" disabled selected>Seleziona Larus</option>
+          </select>
+          <br />
+          <select id="documents-dropdown" onchange="updateDocumentDataText()">
+            <option value="" disabled selected>Seleziona Coordinata</option>
+          </select>
+          <br />
+
+            <h3>Modifica Documento</h5>
+
+            <textarea
+              id="update-collection-json"
+              style="width: 100%; height: 300px"
+              placeholder="Nessun documento selezionato"
+            ></textarea>
+          <div class="modal-footer">
+            <button
+              class="button">
+              Chiudi
+            </button>
+            <button class="button" onclick="updateCollection()">
+              Salva Modifiche
+            </button>
+          </div>
+
+          <div>
+            <h2>Aggiungi Traiettoria</h2>
+            <input
+              type="text"
+              id="new-collection-name"
+              placeholder="Larus"
+            /><br />
+            <!-- <label for="new-collection-json"
+              >Dati della collezione (formato JSON):</label
+            ><br /> -->
+            <textarea
+              id="new-collection-json"
+              style="width: 100%; height: 300px"
+              placeholder="Incolla il file"
+            ></textarea
+            ><br /><br />
+            <!-- <label for="file-upload">Carica un file JSON:</label> -->
+            <div style="display: flex; justify-content: flex-end; align-items: center;">
+              
+              <label for="file-upload" class = "button">Seleziona file JSON</label>
+              <input
+                  type="file"
+                  id="file-upload"
+                  accept=".json"
+                  style = "visibility: hidden;"
+                  onchange="handleFileUpload(event)"/>
+
+              <button onclick="addCollection()" style="margin-right: 10px;" class = "button">Aggiungi Collezione</button>
+              
+              <a href="https://geojson.io/#map=5.08/43.86/11.21" target="_blank">
+                  <button class = "button">Vai a geojson.io</button>
+              </a>
+            </div>
+          </div>
+
+ 
+
+
+        </section>
+      </section>
+    </div>
+  </body>
+
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+  <script src="assets/js/inserisci_dati_script.js"></script>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</html>
