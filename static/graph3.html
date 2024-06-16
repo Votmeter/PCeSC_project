@@ -45,17 +45,8 @@
         <nav id="nav">
             <ul>
                 <li><a href="informazioni.html">Informazioni</a></li>
-                <li>
-                    <a href="#">Seleziona Traiettorie Migratorie</a>
-                    <ul>
-                        <li><a href="/graph3">Traiettorie Migratorie</a></li>
-                        <li><a href="/generate_corridor_plot">Corridoio Migratorio</a></li>
-                        <li><a href="/selgraph">Tracciamento Esemplari</a></li>
-                        <li><a href="/selgraphanimato">Tracciamento Animato</a></li>
-                        <li><a href="inserisci_dati.html">Modifica Traiettorie</a></li>
-                    </ul>
-                </li>
                 <li><a href="accedi.html" class="button">Login</a></li>
+                <li><a href="/logout" class="button">Logout</a></li>
             </ul>
         </nav>
     </header>
@@ -137,12 +128,12 @@
         for (x in data) {
             let scatterData = {};
             let lineData = {};
-            if(temp == 0){ Plotly.newPlot('mapid1', [lineData, scatterData], layout); }
-            if(temp == 0){ Plotly.newPlot('mapid2', [lineData, scatterData], layout); }
-            if(temp == 0){ Plotly.newPlot('mapid3', [lineData, scatterData], layout); }
-            if(temp == 0){ Plotly.newPlot('mapid4', [lineData, scatterData], layout); }
-            if(temp == 0){ Plotly.newPlot('mapid5', [lineData, scatterData], layout); }
-            if(temp == 0){ Plotly.newPlot('mapid6', [lineData, scatterData], layout); }
+            if(temp == 0){ Plotly.newPlot('mapid1', [lineData, scatterData], layout, {displayModeBar: false}); }   <!-- temp: Variabile di controllo per inizializzare i grafici solo una volta -->
+            if(temp == 0){ Plotly.newPlot('mapid2', [lineData, scatterData], layout, {displayModeBar: false}); }
+            if(temp == 0){ Plotly.newPlot('mapid3', [lineData, scatterData], layout, {displayModeBar: false}); }
+            if(temp == 0){ Plotly.newPlot('mapid4', [lineData, scatterData], layout, {displayModeBar: false}); }
+            if(temp == 0){ Plotly.newPlot('mapid5', [lineData, scatterData], layout, {displayModeBar: false}); }
+            if(temp == 0){ Plotly.newPlot('mapid6', [lineData, scatterData], layout, {displayModeBar: false}); }
             let latitudine = [];
             for(k in data[x]){ latitudine.push(data[x][k][0]); }
             let longitudine = [];

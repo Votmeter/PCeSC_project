@@ -79,7 +79,6 @@ def logout():
     return redirect('/')
 
 @app.route('/graph5/<s>')
-@login_required
 def graph2(s):
     print('ciao2')
     d2 = json.loads(get_data(s)[0])
@@ -185,6 +184,11 @@ def generate_corridor_plot():
 
 
 # NICO's part
+@app.route("/inserisci_dati")
+@login_required
+def inseriscidati():
+    return render_template('inserisci_dati.html')
+
 @app.route('/get_collections', methods=['GET'])
 def get_collections():
     collections = db.collections()
