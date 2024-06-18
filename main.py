@@ -31,7 +31,7 @@ app.config['SECRET_KEY'] = secret_key
 login = LoginManager(app)
 login.login_view = '/static/accedi.html'
 
-usersdb = { 'mess':'1234' }
+usersdb = { 'utente':'1234' }
 
 db = '(default)'
 db = firestore.Client.from_service_account_json('credentials.json', database=db)
@@ -79,7 +79,6 @@ def logout():
     return redirect('/')
 
 @app.route('/graph5/<s>')
-@login_required
 def graph2(s):
     print('ciao2')
     d2 = json.loads(get_data(s)[0])
@@ -185,6 +184,11 @@ def generate_corridor_plot():
 
 
 # NICO's part
+@app.route("/inserisci_dati")
+@login_required
+def inseriscidati():
+    return render_template('inserisci_dati.html')
+
 @app.route('/get_collections', methods=['GET'])
 
 def get_collections():
@@ -299,4 +303,4 @@ def inserisci_dati():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080, debug=True)
+    app.run(host='0.0.0.0', port=443, debug=True, ssl_context="adhoc")
