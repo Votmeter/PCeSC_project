@@ -200,6 +200,7 @@ def inseriscidati():
     return render_template('inserisci_dati.html')
 
 @app.route('/get_collections', methods=['GET'])
+
 def get_collections():
     collections = db.collections()
     collection_names = [collection.id for collection in collections]
@@ -304,6 +305,11 @@ def update_document(collection_name, document_id):
     doc_ref.set(data, merge=True)
 
     return jsonify({"success": True}), 200
+
+@app.route('/static/inserisci_dati.html')
+@login_required
+def inserisci_dati():
+    return render_template('inserisci_dati.html')
 
 
 if __name__ == '__main__':
