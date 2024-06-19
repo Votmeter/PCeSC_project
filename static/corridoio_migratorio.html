@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
+			<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
   <head>
-    <title>Corridorio Migratorio</title>
+    <title> Tracciamento Larus </title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
     <link rel="stylesheet" href="/static/assets/css/main.css" />
@@ -37,14 +39,6 @@
         </section>
       </section>
     </div>
-
-    <script src="/static/assets/js/jquery.min.js"></script>
-    <script src="/static/assets/js/jquery.scrolly.min.js"></script>
-    <script src="/static/assets/js/jquery.scrollex.min.js"></script>
-    <script src="/static/assets/js/browser.min.js"></script>
-    <script src="/static/assets/js/breakpoints.min.js"></script>
-    <script src="/static/assets/js/util.js"></script>
-    <script src="/static/assets/js/main.js"></script>
 
     <script type="text/javascript">
       document.addEventListener('DOMContentLoaded', function() {
@@ -134,7 +128,7 @@
                   yaxis: { title: 'Latitudine' },
                   legend: { x: 1, y: 1 },
                   widht:400,
-                  height:800,
+                  height:250,
               };
               const traces = [];
               const colorMap = {
