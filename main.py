@@ -134,16 +134,21 @@ def get_references():
 def root_grafico():
     df={}
     i=0
+    ref = json.loads(get_references()[0])
     for x in db.collections():
+        if x.id not in ref:
+            continue
+        if ref[x.id][1] == "not translocated":
+            continue
         if (i > 127):
             break
         try:
             df[x.id]=json.loads(get_data(x.id)[0])
             #print(x.id)
             i+=1
+            print(i)
         except:
             continue
-    ref=json.loads(get_references()[0])
     return render_template('graph3.html', data=json.dumps(df),ref=json.dumps(ref))
 
 @app.route('/selgraph')
@@ -169,16 +174,21 @@ def getlistanimated():
 def generate_corridor_plot():
     df = {}
     i = 0
+    ref = json.loads(get_references()[0])
     for x in db.collections():
+        if x.id not in ref:
+            continue
+        if ref[x.id][1] == "not translocated":
+            continue
         if (i > 127):
             break
         try:
             df[x.id] = json.loads(get_data(x.id)[0])
             # print(x.id)
             i += 1
+            print(i)
         except:
             continue
-    ref = json.loads(get_references()[0])
 
     return render_template('corridoio_migratorio.html', data=json.dumps(df), ref=json.dumps(ref))
 
@@ -297,4 +307,5 @@ def update_document(collection_name, document_id):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=443, debug=True, ssl_context="adhoc")
+    app.run(host='0.0.0.0', port=443, debug=True, ssl_context="adhoc") #riga da commentare se si fa girare in locale
+    #app.run(host='0.0.0.0', port=443, debug=True) #riga da commentare se si fa girare in app
