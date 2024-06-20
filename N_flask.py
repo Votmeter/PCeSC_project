@@ -35,7 +35,7 @@ def main():
 
 @app.route('/collections')
 def serve_html():
-    return send_from_directory('static', 'mockpage.html')
+    return send_from_directory('static', 'ZTESTmockpage.html')
 
 @app.route('/get_collections', methods=['GET'])
 def get_collections():
