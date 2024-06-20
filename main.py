@@ -83,7 +83,7 @@ def graph2(s):
     print('ciao2')
     d2 = json.loads(get_data(s)[0])
     print(d2)
-    return render_template('graph5base.html', data=d2, gmk=gmaps_key)
+    return render_template('ZTESTgraph5base.html', data=d2, gmk=gmaps_key)
 
 @app.route('/graph5animated/<s>')
 def graph5animated(s):
