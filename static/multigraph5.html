@@ -3,7 +3,7 @@
 			<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
 	<head>
-		<title> Tracciamento Larus </title>
+		<title> Tracciamento Esemplari </title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/static/assets/css/main.css" />
@@ -15,10 +15,20 @@
 
 			<!-- Header -->
 			<header id="header" >
-				<h1><a href="/">Tracciamento Uccelli</a></h1>
+				<h1><a href="/">Tracciamento Larus</a></h1>
 				<nav id="nav">
 					<ul>
-						<li><a href="informazioni.html">Informazioni</a></li>
+						<li><a href="/static/informazioni.html">Informazioni</a></li>
+						<li>
+				                    <a href="#">Menù principale</a>
+				                    <ul>
+				                        <li><a href="/graph3">Traiettorie Migratorie</a></li>
+				                        <li><a href="/generate_corridor_plot">Corridoio Migratorio</a></li>
+				                        <li><a href="/selgraph">Tracciamento Esemplari</a></li>
+				                        <li><a href="/selgraphanimato">Tracciamento Animato</a></li>
+				                        <li><a href="/inserisci_dati">Modifica Traiettorie</a></li>
+				                    </ul>
+				                </li>
 						<li><a href="accedi.html" class="button">Login</a></li>
 						<li><a href="/logout" class="button">Logout</a></li>
 					</ul>
