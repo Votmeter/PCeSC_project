@@ -44,8 +44,8 @@
 			<!-- Main -->
 				<section id="main" class="container">
 					<section class="box special">
-						<header class="major">
-							<h2><br> Visualizzazione delle traiettorie: {{s}} <br />
+						<header class="major">							
+							<h2><br> Visualizzazione delle Traiettorie: {{ s.split(' ') | select('string') | reject('equalto', '') | join(', ') }} <br /></h2>
 							</h2>
 							<p></p>
 						</header>
