@@ -29,7 +29,7 @@
                         <li><a href="/inserisci_dati">Modifica Traiettorie</a></li>
                     </ul>
                 </li>
-                <li><a href="accedi.html" class="button">Login</a></li>
+                <li><a href="/static/accedi.html" class="button">Login</a></li>
                 <li><a href="/logout" class="button">Logout</a></li>
             </ul>
         </nav>
@@ -44,7 +44,7 @@
       <section id="main" class="container">
         <section class="box special">
           <header class="major">
-            <h2>Visualizzazione del Corridoio Migratorio</h2>
+            <h2>Distanze Medie degli Uccelli Traslocati dal Corridoio Migratorio</h2>
           </header>
           <div id="corridorPlot"></div>
         </section>
@@ -134,7 +134,6 @@
               // Creazione del grafico
               const corridorPlot = document.getElementById('corridorPlot');
               const layout = {
-                  title: 'Distanze Medie degli Uccelli Traslocati dal Corridoio Migratorio',
                   xaxis: { title: 'Distanza dal corridoio migratorio (km)' },
                   yaxis: { title: 'Latitudine' },
                   legend: { x: 1, y: 1 },
