@@ -1,81 +1,106 @@
 <!DOCTYPE HTML>
 <html>
-			<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-			<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
-	<head>
-		<title>Login </title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="/static/assets/css/main.css" />
-		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"/>
-		<noscript><link rel="stylesheet" href="assets/css/main.css" /></noscript>
-		<link rel="icon"  href="/static/images/gabbiano.jpeg" />
-	</head>
-	<body class="landing is-preload">
-		<div id="page-wrapper">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+<head>
+    <title>Login </title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="/static/assets/css/main.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"/>
+    <noscript><link rel="stylesheet" href="assets/css/main.css" /></noscript>
+    <link rel="icon" href="/static/images/gabbiano.jpeg" />
+    <style>
+        .form-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+        .centered-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .centered-form input[type="text"],
+        .centered-form input[type="password"] {
+            width: 100%; /* Imposta la larghezza al 100% del contenitore */
+            margin-bottom: 10px;
+            padding: 15px; /* Aumenta il padding per rendere i campi più grandi */
+            font-size: 16px; /* Aumenta la dimensione del font */
+            border: 2px solid #ccc; /* Aumenta la dimensione del bordo */
+            border-radius: 4px;
+            box-sizing: border-box; /* Include il padding e il bordo nella larghezza totale */
+        }
+    </style>
+</head>
+<body class="landing is-preload">
+    <div id="page-wrapper">
 
-			<!-- Header -->
+        <!-- Header -->
 
-			<header id="header" >
-				<h1><a href="/">Tracciamento Larus</a></h1>
-				<nav id="nav">
-					<ul>
-						<li><a href="/static/informazioni.html">Informazioni</a></li>
-						<li>
-							<a href="#">Menù principale</a>
-							<ul>
-								<li><a href="/graph3">Traiettorie Migratorie</a></li>
-								<li><a href="/generate_corridor_plot">Corridoio Migratorio</a></li>
-								<li><a href="/selgraph">Tracciamento Esemplari</a></li>
-								<li><a href="/selgraphanimato">Tracciamento Animato</a></li>
-								<li><a href="/inserisci_dati">Modifica Traiettorie</a></li>
-							</ul>
-						</li>
-						<li><a href="accedi.html" class="button">Login</a></li>
-						<li><a href="/logout" class="button">Logout</a></li>
-					</ul>
-				</nav>
-			</header>
+        <header id="header" >
+            <h1><a href="/">Tracciamento Larus</a></h1>
+            <nav id="nav">
+                <ul>
+                    <li><a href="/static/informazioni.html">Informazioni</a></li>
+                    <li>
+                        <a href="#">Menù principale</a>
+                        <ul>
+                            <li><a href="/graph3">Traiettorie Migratorie</a></li>
+                            <li><a href="/generate_corridor_plot">Corridoio Migratorio</a></li>
+                            <li><a href="/selgraph">Tracciamento Esemplari</a></li>
+                            <li><a href="/selgraphanimato">Tracciamento Animato</a></li>
+                            <li><a href="/inserisci_dati">Modifica Traiettorie</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="accedi.html" class="button">Login</a></li>
+                    <li><a href="/logout" class="button">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
 
-				<section id="banner">
+        <section id="banner">
+        </section>
 
-				</section>
+        <!-- Main -->
+        <section id="main" class="container small">
 
-			<!-- Main -->
-				<section id="main" class="container small">
+            <header>
+                <h2> <b> Login</b> </h2>
+            </header>
 
-					<header>
-						<h2> <b> Login</b> </h2>
-
-					</header>
-
-					<div class="box">
-							<div class="row gtr-50 gtr-uniform">
-
-								<form action="/login" method="post">
-								username <input type="text" name="u"><br>
-								password <input type="password" name="p"><br>
-								<input type="hidden" id="next" name="next">
-								<!-- inserisco un pezzo di javascript che dicono: prendi il campo next dall'URL della pagina login imposto la casella index-->
-								<div class="col-12">
-								<ul class="actions special">
-									<li><input type="submit" value="Accedi" href="/login"/></li>
-								</ul>
-								</div>
-								</form>
-								<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-								<script type="text/javascript">
-									const searchParams = new URLSearchParams(window.location.search);
-									next = searchParams.get('next')
-									$("#next").val(next)
-								</script>
-
-							</div>
-					</div>
-				</section>
-
-
-		</div>
-
-	</body>
+            <div class="box form-container">
+                <div class="row gtr-50 gtr-uniform">
+                    <form action="/login" method="post" class="centered-form">
+                        username <input type="text" name="u"><br>
+                        password <input type="password" name="p"><br>
+                        <input type="hidden" id="next" name="next">
+                        <!-- inserisco un pezzo di javascript che dicono: prendi il campo next dall'URL della pagina login imposto la casella index-->
+                        <div class="col-12">
+                            <ul class="actions special">
+                                <li><input type="submit" value="Accedi" href="/login"/></li>
+                            </ul>
+                        </div>
+                    </form>
+                    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+                    <script type="text/javascript">
+                        const searchParams = new URLSearchParams(window.location.search);
+                        next = searchParams.get('next')
+                        $("#next").val(next)
+                    </script>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+<!-- Scripts -->
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/jquery.dropotron.min.js"></script>
+<script src="assets/js/jquery.scrollex.min.js"></script>
+<script src="assets/js/browser.min.js"></script>
+<script src="assets/js/breakpoints.min.js"></script>
+<script src="assets/js/util.js"></script>
+<script src="assets/js/main.js"></script>
 </html>
