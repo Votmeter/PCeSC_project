@@ -1,5 +1,6 @@
 <!DOCTYPE HTML>
 <html>
+
 <head>
     <title> Traiettorie Migratorie </title>
     <meta charset="utf-8" />
@@ -41,23 +42,25 @@
 <body class="landing is-preload">
 <div id="page-wrapper">
     <!-- Header -->
-    <header id="header" >
+    <header id="header" class="alt">
         <h1><a href="/">Tracciamento Larus</a></h1>
         <nav id="nav">
             <ul>
-                <li><a href="/static/informazioni.html">Informazioni</a></li>
                 <li>
-                    <a href="#">Menù principale</a>
-                    <ul>
-                        <li><a href="/graph3">Traiettorie Migratorie</a></li>
-                        <li><a href="/generate_corridor_plot">Corridoio Migratorio</a></li>
-                        <li><a href="/selgraph">Tracciamento Esemplari</a></li>
-                        <li><a href="/selgraphanimato">Tracciamento Animato</a></li>
-                        <li><a href="/inserisci_dati">Modifica Traiettorie</a></li>
-                    </ul>
+                    <li><a href="/static/informazioni.html">Informazioni</a></li>
+                    <li>
+                        <a href="#">Menù principale</a>
+                        <ul>
+                            <li><a href="/graph3">Traiettorie Migratorie</a></li>
+                            <li><a href="/generate_corridor_plot">Corridoio Migratorio</a></li>
+                            <li><a href="/selgraph">Tracciamento Esemplari</a></li>
+                            <li><a href="/selgraphanimato">Tracciamento Animato</a></li>
+                            <li><a href="/inserisci_dati">Modifica Traiettorie</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="/static/accedi.html" class="button">Login</a></li>
+                    <li><a href="/logout" class="button">Logout</a></li>
                 </li>
-                <li><a href="/static/accedi.html" class="button">Login</a></li>
-                <li><a href="/logout" class="button">Logout</a></li>
             </ul>
         </nav>
     </header>
@@ -168,6 +171,13 @@
 
     createPlot();
 </script>
+<script src="/static/assets/js/jquery.min.js"></script>
+<script src="/static/assets/js/jquery.dropotron.min.js"></script>
+<script src="/static/assets/js/jquery.scrollex.min.js"></script>
+<script src="/static/assets/js/browser.min.js"></script>
+<script src="/static/assets/js/breakpoints.min.js"></script>
+<script src="/static/assets/js/util.js"></script>
+<script src="/static/assets/js/main.js"></script>
 </body>
 </html>
 

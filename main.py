@@ -314,4 +314,4 @@ def inserisci_dati():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=443, debug=True, ssl_context="adhoc") #riga da commentare se si fa girare in locale
-    app.run(host='0.0.0.0', port=443, debug=True) #riga da commentare se si fa girare in app
+    #app.run(host='0.0.0.0', port=443, debug=True) #riga da commentare se si fa girare in app
